@@ -16,6 +16,8 @@
 
 - 右键选中项目名称->生成依赖项->生成自定义->勾选masm
 
+- 新建一个源文件，命名为*.asm (该步骤必须)
+
 - 项目属性->链接器->常规->附加库目录->添加`~/masm32/lib`，我这里是C:\DevTools\masm32\lib
 
 - 项目属性->Microsoft Macro Assembler->General->Include paths->添加`~/masm32/include`，我这里是C:\DevTools\masm32\include
