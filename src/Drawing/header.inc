@@ -26,6 +26,13 @@ HandlePaint			PROTO hWnd:HWND, wParam:WPARAM, lParam:LPARAM		; VM_PAINT
 ; paint.asm		绘制函数
 Erase				PROTO hdc:HDC	; 橡皮擦
 Freehand			PROTO hdc:HDC	; 自由绘制
+Draw_Line			PROTO hdc:HDC	; 直线
+Draw_Line_Inverse	PROTO hdc:HDC
+Draw_Circle			PROTO hdc:HDC	; 圆形
+Draw_Circle_Inverse	PROTO hdc:HDC
+Draw_Rect			PROTO hdc:HDC	; 矩形
+Draw_Rect_Inverse	PROTO hdc:HDC
+Draw_Text			PROTO hdc:HDC
 
 
 ;----------------------const-----------------------------
@@ -41,6 +48,7 @@ Freehand			PROTO hdc:HDC	; 自由绘制
 	pen_style		DWORD	PS_SOLID
 	pen_width		DWORD	3
 	pen_color		DWORD	0h
+
 	
 	;橡皮擦
 	eraser_size		DWORD	10
@@ -66,7 +74,11 @@ Freehand			PROTO hdc:HDC	; 自由绘制
 	;绘制模式编号
 	IDM_MODE_FREEHAND		equ	501		;自由绘制
 	IDM_MODE_ERASE			equ	502		;橡皮擦
-	IDM_MODE_SETGREEN		equ 503		;设置绿色
+	IDM_MODE_SHAPE_LINE		equ 503		;绘制直线
+	IDM_MODE_SHAPE_CIRCLE	equ 504		;绘制圆形
+	IDM_MODE_SHAPE_RECT		equ 505		;绘制矩形
+	IDM_MODE_TEXT			equ 506		;输入文字
+	IDM_MODE_COLPIC			equ 507		;选择颜色
 
 	;菜单-文件：打开，保存
 	IDM_MENU_FILE			equ 420
@@ -76,21 +88,19 @@ Freehand			PROTO hdc:HDC	; 自由绘制
 	;菜单-画笔：画笔、铅笔
 	IDM_MENU_BRUSH			equ	430
 	IDM_MENU_BRUSH_BASIC	equ	431
-	IDM_MENU_BRUSH_PENCIL	equ	432
+	IDM_MENU_BRUSH_DASH		equ	432
 
-	;菜单-工具：橡皮擦，填充，文本，颜色取色器，框选
+	;菜单-工具：橡皮擦，文本，颜色取色器，框选
 	IDM_MENU_TOOL			equ	440
 	IDM_MENU_TOOL_ERASER	equ 441
-	IDM_MENU_TOOL_FILL		equ 442
-	IDM_MENU_TOOL_TEXT		equ	443
-	IDM_MENU_TOOL_COLPIC	equ	444		;color picker
-	IDM_MENU_TOOL_SELECT	equ 445
+	IDM_MENU_TOOL_TEXT		equ	442
+	IDM_MENU_TOOL_COLPIC	equ	443		;color picker
+	IDM_MENU_TOOL_SELECT	equ 444
 
 	;菜单-形状：直线，圆形，三角形，矩形
 	IDM_MENU_SHAPE			equ	450
 	IDM_MENU_SHAPE_LINE		equ	451
-	IDM_MENU_SHAPE_ROUND	equ	452
-	IDM_MENU_SHAPE_TRI		equ	453
+	IDM_MENU_SHAPE_CIRCLE	equ	452
 	IDM_MENU_SHAPE_RECT		equ	454
 
 	;菜单-大小：1px, 3px, 5px, 7px
@@ -123,13 +133,12 @@ Freehand			PROTO hdc:HDC	; 自由绘制
 	
 	;画笔
 	str_menu_brush			BYTE	"画笔", 0
-	str_menu_brush_basic	BYTE	"画笔", 0
-	str_menu_brush_pencil	BYTE	"铅笔", 0
+	str_menu_brush_basic	BYTE	"实线", 0
+	str_menu_brush_dash		BYTE	"虚线(仅对形状生效)", 0
 	
 	;工具
 	str_menu_tool			BYTE	"工具",	0
 	str_menu_tool_eraser	BYTE	"橡皮擦", 0
-	str_menu_tool_fill		BYTE	"填充", 0
 	str_menu_tool_text		BYTE	"文本", 0
 	str_menu_tool_colpic	BYTE	"取色器", 0
 	str_menu_tool_select	BYTE	"框选", 0
@@ -137,8 +146,7 @@ Freehand			PROTO hdc:HDC	; 自由绘制
 	;形状
 	str_menu_shape			BYTE	"形状", 0
 	str_menu_shape_line		BYTE	"直线", 0
-	str_menu_shape_round	BYTE	"圆形", 0
-	str_menu_shape_tri		BYTE	"三角形", 0
+	str_menu_shape_circle	BYTE	"圆形", 0
 	str_menu_shape_rect		BYTE	"矩形", 0
 
 	;大小

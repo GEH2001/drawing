@@ -35,14 +35,13 @@ CreateMainMenu PROC
 	INVOKE CreatePopupMenu
 	mov hBrushMenu, eax
 	INVOKE AppendMenu, hBrushMenu, MF_STRING, IDM_MENU_BRUSH_BASIC, ADDR str_menu_brush_basic
-	INVOKE AppendMenu, hBrushMenu, MF_STRING, IDM_MENU_BRUSH_PENCIL, ADDR str_menu_brush_pencil
+	INVOKE AppendMenu, hBrushMenu, MF_STRING, IDM_MENU_BRUSH_DASH, ADDR str_menu_brush_dash
 	INVOKE AppendMenu, hMenu, MF_POPUP, hBrushMenu, ADDR str_menu_brush
 
 	;¹¤¾ß
 	INVOKE CreatePopupMenu
 	mov hToolMenu, eax
 	INVOKE AppendMenu, hToolMenu, MF_STRING, IDM_MENU_TOOL_ERASER, ADDR str_menu_tool_eraser
-	INVOKE AppendMenu, hToolMenu, MF_STRING, IDM_MENU_TOOL_FILL, ADDR str_menu_tool_fill
 	INVOKE AppendMenu, hToolMenu, MF_STRING, IDM_MENU_TOOL_TEXT, ADDR str_menu_tool_text
 	INVOKE AppendMenu, hToolMenu, MF_STRING, IDM_MENU_TOOL_COLPIC, ADDR str_menu_tool_colpic
 	INVOKE AppendMenu, hToolMenu, MF_STRING, IDM_MENU_TOOL_SELECT, ADDR str_menu_tool_select
@@ -52,8 +51,7 @@ CreateMainMenu PROC
 	INVOKE CreatePopupMenu
 	mov hShapeMenu, eax
 	INVOKE AppendMenu, hShapeMenu, MF_STRING, IDM_MENU_SHAPE_LINE, ADDR str_menu_shape_line
-	INVOKE AppendMenu, hShapeMenu, MF_STRING, IDM_MENU_SHAPE_ROUND, ADDR str_menu_shape_round
-	INVOKE AppendMenu, hShapeMenu, MF_STRING, IDM_MENU_SHAPE_TRI, ADDR str_menu_shape_tri
+	INVOKE AppendMenu, hShapeMenu, MF_STRING, IDM_MENU_SHAPE_CIRCLE, ADDR str_menu_shape_circle
 	INVOKE AppendMenu, hShapeMenu, MF_STRING, IDM_MENU_SHAPE_RECT, ADDR str_menu_shape_rect
 	INVOKE AppendMenu, hMenu, MF_POPUP, hShapeMenu, ADDR str_menu_shape
 	
