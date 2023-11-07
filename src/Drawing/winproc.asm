@@ -20,11 +20,43 @@ HandleCommand PROC USES ebx ecx,
 	hWnd: HWND, wParam: WPARAM, lParam: LPARAM
 	
 	;extern mode:DWORD	; 绘制模式，定义在 paint.asm
-
+	;更改画笔类型
 	.IF wParam == IDM_MENU_BRUSH_BASIC
 		mov mode, IDM_MODE_FREEHAND
+	;选择工具
 	.ELSEIF wParam == IDM_MENU_TOOL_ERASER
 		mov mode, IDM_MODE_ERASE
+	;更改笔触大小
+	.ELSEIF wParam == IDM_MENU_SIZE_ONE
+		mov pen_width, 1 
+	.ELSEIF wParam == IDM_MENU_SIZE_THREE
+		mov pen_width, 3 
+	.ELSEIF wParam == IDM_MENU_SIZE_FIVE
+		mov pen_width, 5 
+	.ELSEIF wParam == IDM_MENU_SIZE_SEVEN
+		mov pen_width, 7 
+	;更改颜色
+	.ELSEIF wParam == IDM_MENU_COLOR_BLACK
+		mov pen_color, 0h
+	.ELSEIF wParam == IDM_MENU_COLOR_RED
+		mov pen_color, 0FFh
+	.ELSEIF wParam == IDM_MENU_COLOR_ORANGE
+		mov pen_color, 0A5FFh
+	.ELSEIF wParam == IDM_MENU_COLOR_GREEN
+		mov pen_color, 0FF00h
+	.ELSEIF wParam == IDM_MENU_COLOR_YELLOW
+		mov pen_color, 0FFFFh
+	.ELSEIF wParam == IDM_MENU_COLOR_PURPLE
+		mov pen_color, 0FF00FFh
+	.ELSEIF wParam == IDM_MENU_COLOR_CYAN
+		mov pen_color, 0FFFF00h
+	.ELSEIF wParam == IDM_MENU_COLOR_BLUE
+		mov pen_color, 0FF0000h
+	.ELSEIF wParam == IDM_MENU_COLOR_CELESTE
+		mov pen_color, 0FF7F00h
+	.ELSEIF wParam == IDM_MENU_COLOR_WHITE
+		mov pen_color, 0FFFFFFh
+
 	.ENDIF
 
 	ret
@@ -52,6 +84,7 @@ HandleMouseMove PROC USES ebx ecx edx,
 	mov curX, ecx
 	mov curY, ebx
 	
+
 	;更新 begin(x,y) end(x,y)
 	.IF mode == IDM_MODE_FREEHAND	;画图模式
 		.IF lMouseFlag == 1

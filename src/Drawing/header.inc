@@ -39,8 +39,8 @@ Freehand			PROTO hdc:HDC	; 自由绘制
 
 	;画笔属性
 	pen_style		DWORD	PS_SOLID
-	pen_width		DWORD	2
-	pen_color		DWORD	0FFh
+	pen_width		DWORD	3
+	pen_color		DWORD	0h
 	
 	;橡皮擦
 	eraser_size		DWORD	10
@@ -66,6 +66,7 @@ Freehand			PROTO hdc:HDC	; 自由绘制
 	;绘制模式编号
 	IDM_MODE_FREEHAND		equ	501		;自由绘制
 	IDM_MODE_ERASE			equ	502		;橡皮擦
+	IDM_MODE_SETGREEN		equ 503		;设置绿色
 
 	;菜单-文件：打开，保存
 	IDM_MENU_FILE			equ 420
@@ -103,10 +104,14 @@ Freehand			PROTO hdc:HDC	; 自由绘制
 	IDM_MENU_COLOR			equ	470
 	IDM_MENU_COLOR_BLACK	equ	471
 	IDM_MENU_COLOR_RED		equ	472
-	IDM_MENU_COLOR_GREEN	equ	473
-	IDM_MENU_COLOR_YELLOW	equ	474
-	IDM_MENU_COLOR_BLUE		equ	475
-	IDM_MENU_COLOR_WHITE	equ	476
+	IDM_MENU_COLOR_ORANGE	equ	473
+	IDM_MENU_COLOR_GREEN	equ	474
+	IDM_MENU_COLOR_YELLOW	equ	475
+	IDM_MENU_COLOR_PURPLE	equ	476
+	IDM_MENU_COLOR_CYAN		equ	477
+	IDM_MENU_COLOR_BLUE		equ	478
+	IDM_MENU_COLOR_CELESTE	equ	479
+	IDM_MENU_COLOR_WHITE	equ	480
 	
 
 	;--------------字符串-----------------------------
@@ -147,7 +152,11 @@ Freehand			PROTO hdc:HDC	; 自由绘制
 	str_menu_color			BYTE	"颜色", 0
 	str_menu_color_black	BYTE	"黑色", 0
 	str_menu_color_red		BYTE	"红色", 0
+	str_menu_color_orange	BYTE	"橙色", 0
 	str_menu_color_green	BYTE	"绿色", 0
 	str_menu_color_yellow	BYTE	"黄色", 0
+	str_menu_color_purple	BYTE	"紫色", 0
+	str_menu_color_cyan		BYTE	"青色", 0
 	str_menu_color_blue		BYTE	"蓝色", 0
+	str_menu_color_celeste	BYTE	"蔚蓝", 0
 	str_menu_color_white	BYTE	"白色", 0
