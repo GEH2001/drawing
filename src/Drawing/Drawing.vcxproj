@@ -81,10 +81,10 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\DevTools\masm32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\DevTools\masm32\lib;C:\masm32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <MASM>
-      <IncludePaths>C:\DevTools\masm32\include;%(IncludePaths)</IncludePaths>
+      <IncludePaths>C:\DevTools\masm32\include;C:\masm32\include;%(IncludePaths)</IncludePaths>
     </MASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -144,6 +144,7 @@
     </MASM>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <MASM Include="file.asm" />
     <MASM Include="main.asm" />
     <MASM Include="menu.asm" />
     <MASM Include="paint.asm" />

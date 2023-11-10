@@ -34,6 +34,9 @@ Draw_Rect			PROTO hdc:HDC	; 矩形
 Draw_Rect_Inverse	PROTO hdc:HDC
 Draw_Text			PROTO hdc:HDC
 
+;file.asm		文件处理
+Openfile			PROTO hWnd:HWND	; 打开文件
+Savefile			PROTO hWnd:HWND	; 保存文件
 
 ;----------------------const-----------------------------
 

@@ -11,7 +11,7 @@ INCLUDE header.inc
 .data
 
 ;lMouseFlag	DWORD	0		;鼠标左键状态：down(1)、up(0)，只有down的时候才会绘制
-drawingArea	RECT <0,0,800,600>	;绘制区域，就是窗口的 client area
+drawingArea	RECT <0,0,988,600>	;绘制区域，就是窗口的 client area
 drawingText LPCTSTR "draw"
 color		DWORD	0
 
@@ -26,6 +26,7 @@ HandleCommand PROC USES ebx ecx,
 	;更改画笔类型
 	.IF wParam == IDM_MENU_BRUSH_BASIC
 		mov mode, IDM_MODE_FREEHAND
+		mov pen_style, PS_SOLID
 	.ELSEIF wParam == IDM_MENU_BRUSH_DASH
 		mov pen_style, PS_DASH
 		mov pen_width, 1
@@ -73,6 +74,11 @@ HandleCommand PROC USES ebx ecx,
 		mov pen_color, 0FF7F00h
 	.ELSEIF wParam == IDM_MENU_COLOR_WHITE
 		mov pen_color, 0FFFFFFh
+	; 选择文件
+	.ELSEIF wParam == IDM_MENU_FILE_OPEN
+		INVOKE Openfile, hWnd
+	.ELSEIF wParam == IDM_MENU_FILE_SAVE
+		INVOKE Savefile, hWnd
 
 	.ENDIF
 
