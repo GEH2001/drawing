@@ -8,6 +8,7 @@ include user32.inc
 include comdlg32.inc
 include msvcrt.inc
 include gdi32.inc
+include header.inc
 
 includelib kernel32.lib
 includelib user32.lib
@@ -26,16 +27,11 @@ fileNameBuffer  BYTE      MAX_PATH dup(0)
 dialogTitle     BYTE      "选择文件", 0
 imagePath       DWORD     ?
 
-; DrawImage
-hBitmap         HANDLE    ?
-
 ;Savefile
 iWidth          DWORD       0
 iHeight         DWORD       0
 bmpInfo         BITMAPINFO  <>
-hdcMem          HANDLE      ?
 hBmp            HANDLE      ?
-hOldObj         HANDLE      ?
 bmInfoHeader    BITMAPINFOHEADER    <>
 bmFileHeader    BITMAPFILEHEADER    <>
 hFile           HANDLE      ?         
@@ -51,20 +47,128 @@ szTitle         BYTE        "保存文件", 0
 
 
 .code
-DrawImage PROC
+WindowResize PROC, hWnd: HWND, bitmap:BITMAP
+        LOCAL rect:RECT
+        LOCAL windowX:DWORD
+        LOCAL windowY:DWORD
+        LOCAL w:DWORD   ; 窗口目标尺寸
+        LOCAL h:DWORD
+        LOCAL wb:DWORD  ; 位图尺寸
+        LOCAL hb:DWORD
+        LOCAL ww:DWORD  ; 窗口现有尺寸
+        LOCAL hw:DWORD
+
+        ; 求窗口左上角位置
+        INVOKE GetWindowRect, hWnd, ADDR rect
+        mov eax, rect.left
+        mov windowX, eax
+        mov eax, rect.top
+        mov windowY, eax
+
+        ; 求窗口大小
+        ; 初始值
+        mov eax, bitmap.bmWidth
+        mov w, eax
+        mov wb, eax
+        mov eax, bitmap.bmHeight
+        mov h, eax
+        mov hb, eax
+        mov eax, drawingArea.right
+        sub eax, WINDOW_FRAME_WIDTH
+        mov ww, eax
+        mov eax, drawingArea.bottom
+        sub eax, WINDOW_FRAME_HEIGHT
+        mov hw, eax
+
+        ; 比较宽度
+        mov eax, ww
+        cmp w, eax
+        jle compareHeight
+        mov w, eax          ; w=ww
+        mov eax, h          ; 设置乘数
+        mov ebx, w          ; 设置被乘数
+        mul ebx             ; 执行乘法运算
+        mov h, eax          ; 存储乘法结果
+        mov eax, h          ; 设置被除数
+        xor edx, edx        ; 清零除数高位寄存器
+        mov ebx, wb         ; 设置除数
+        div ebx             ; 执行除法运算
+        mov h, eax          ; 存储商
+
+        ; 比较高度
+    compareHeight:
+        mov eax, hw
+        cmp h, eax
+        jle completed
+        mov eax, w          ; 设置乘数
+        mov ebx, hw         ; 设置被乘数
+        mul ebx             ; 执行乘法运算
+        mov w, eax          ; 存储乘法结果
+        xor edx, edx        ; 清零除数高位寄存器
+        mov ebx, h          ; 设置除数
+        div ebx             ; 执行除法运算
+        mov w, eax          ; 存储商
+        mov eax, hw
+        mov h, eax
+
+    completed:
+        mov eax, w
+        add eax, WINDOW_FRAME_WIDTH
+        mov drawingArea.right, eax
+        mov eax, h
+        add eax, WINDOW_FRAME_HEIGHT
+        mov drawingArea.bottom, eax
+
+        ; 调整窗口位置和大小
+        INVOKE MoveWindow, hWnd, windowX, windowY, drawingArea.right, drawingArea.bottom, TRUE
+        ret
+WindowResize ENDP
+
+
+DrawImage PROC, hWnd: HWND
+        LOCAL hdcMem:HANDLE
+        LOCAL hOldBitmap:HANDLE
+        LOCAL hBitmap:HANDLE
+        LOCAL bitmap:BITMAP
+        LOCAL imageWidth:DWORD
+        LOCAL imageHeight:DWORD
+        LOCAL ps:PAINTSTRUCT
+
+        ; 开始绘制
+        INVOKE BeginPaint, hWnd, ADDR ps
+
+        ; 创建与指定设备兼容的内存设备上下文
+        INVOKE CreateCompatibleDC, ps.hdc
+        mov hdcMem, eax
+
+        ; 检查文件路径
+        mov edx, imagePath
+        INVOKE MessageBox, 0, edx, OFFSET dialogTitle, MB_OK
+
         ; 调用 LoadImageA 函数加载图像
-        INVOKE LoadImageA, NULL, ADDR imagePath, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE
-        test eax, eax
-        jz loadFail
+        INVOKE LoadImageA, NULL, imagePath, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE
         mov hBitmap, eax    ; 将返回值保存到 hBitmap 变量中
+        test eax, eax
+        jz exitProc
 
-        ; 在此处可以使用 hBitmap 句柄来进行绘制操作
+        ; 获取位图对象
+        INVOKE GetObject, hBitmap, SIZEOF bitmap, ADDR bitmap
+        INVOKE SelectObject, hdcMem, hBitmap
 
+        ; 修改窗口尺寸
+        INVOKE WindowResize, hWnd, bitmap
+
+        ; 绘制
+        mov eax, drawingArea.right
+        sub eax, WINDOW_FRAME_WIDTH
+        mov ebx, drawingArea.bottom
+        sub ebx, WINDOW_FRAME_HEIGHT
+        INVOKE StretchBlt, ps.hdc, 0, 0, eax, ebx, hdcMem, 0, 0, bitmap.bmWidth, bitmap.bmHeight, SRCCOPY
+    exitProc:
         ; 清理资源
         INVOKE DeleteObject, hBitmap
-
-        ; 加载资源失败
-    loadFail:
+        INVOKE DeleteDC, hdcMem
+        INVOKE EndPaint, hWnd, ADDR ps
         ret
 
 DrawImage ENDP
@@ -90,12 +194,10 @@ Openfile PROC, hWnd: HWND
         mov esi, ofn.lpstrFile
         mov imagePath, esi
 
-        ; 输出选择的文件名
-        INVOKE MessageBox, NULL, imagePath, ADDR dialogTitle, MB_OK
+        INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号WM_PAINT
 
         ; 绘制图像
-        INVOKE DrawImage
-
+        INVOKE DrawImage, hWnd
     exitProc:
         ret
 
@@ -103,9 +205,13 @@ Openfile ENDP
 
 
 Savefile PROC, hWnd: HWND
-        ; 获取 HDC
+        LOCAL hdcMem:HANDLE
+        LOCAL hOldObj:HANDLE
         LOCAL ps:PAINTSTRUCT
+
         INVOKE BeginPaint, hWnd, ADDR ps
+
+
         
         ; 获取 HDC 的尺寸
         INVOKE GetDeviceCaps, ps.hdc, HORZRES
@@ -136,8 +242,11 @@ Savefile PROC, hWnd: HWND
         mov hOldObj, eax
 
         ; 将 HDC 的内容用 BitBlt 绘制到缓存中
-        INVOKE StretchBlt, hdcMem, 0, 0, iWidth, iHeight, ps.hdc, 1, 1, 977, 548, SRCCOPY
-        ; INVOKE BitBlt, hdcMem, 0, 0, iWidth, iHeight, ps.hdc, 0, 0, SRCCOPY
+        mov eax, drawingArea.right
+        sub eax, WINDOW_FRAME_WIDTH
+        mov ebx, drawingArea.bottom
+        sub ebx, WINDOW_FRAME_HEIGHT
+        INVOKE StretchBlt, hdcMem, 0, 0, iWidth, iHeight, ps.hdc, 1, 1, eax, ebx, SRCCOPY
 
         ; 将 bmInfoHeader 变量初始化为零
         xor eax, eax
@@ -192,7 +301,7 @@ Savefile PROC, hWnd: HWND
         mov szofn.Flags, OFN_OVERWRITEPROMPT
 
         ; 调用 GetSaveFileName 函数
-        invoke GetSaveFileName, ADDR szofn
+        INVOKE GetSaveFileName, ADDR szofn
 
         ; 检查返回值，如果用户点击了“保存”按钮
         cmp eax, FALSE
@@ -200,7 +309,7 @@ Savefile PROC, hWnd: HWND
 
         ; 获取用户选择的文件路径和文件名
         mov edx, OFFSET szFile
-        invoke MessageBox, 0, edx, offset szTitle, MB_OK
+        INVOKE MessageBox, 0, edx, OFFSET szTitle, MB_OK
 
         ; 调用 CreateFileA 函数
         INVOKE CreateFileA, ADDR szFile, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL

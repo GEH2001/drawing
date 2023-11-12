@@ -11,7 +11,7 @@ INCLUDE header.inc
 .data
 
 ;lMouseFlag	DWORD	0		;鼠标左键状态：down(1)、up(0)，只有down的时候才会绘制
-drawingArea	RECT <0,0,988,600>	;绘制区域，就是窗口的 client area
+;drawingArea	RECT <0,0,988,600>	;绘制区域，就是窗口的 client area
 drawingText LPCTSTR "draw"
 color		DWORD	0
 
@@ -129,13 +129,13 @@ HandleMouseMove PROC USES ebx ecx edx,
 			;把end更新为cur
 			mov endX, ecx	;curX
 			mov endY, ebx	;curY
-			INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号VM_PAINT
+			INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号WM_PAINT
 		.ENDIF
 	.ENDIF
 
 	.IF mode == IDM_MODE_ERASE
 		.IF lMouseFlag == 1
-			INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号VM_PAINT
+			INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号WM_PAINT
 		.ENDIF
 	.ENDIF
 
@@ -159,7 +159,7 @@ HandleMouseMove PROC USES ebx ecx edx,
 			;把end更新为cur
 			mov endX, ecx	;curX
 			mov endY, ebx	;curY
-			INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号VM_PAINT
+			INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号WM_PAINT
 		.ENDIF
 	.ENDIF
 
@@ -173,7 +173,7 @@ HandleLButtonDown PROC,
 
 	mov lMouseFlag, 1
 	.IF mode == IDM_MODE_TEXT
-		INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号VM_PAINT
+		INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号WM_PAINT
 	.ENDIF
 
 	ret

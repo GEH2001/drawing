@@ -70,7 +70,12 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	;endX	DWORD	0	;Freehand：	LineTo
 	;endY	DWORD	0
 
+	; 绘图区大小
+	drawingArea				RECT		<0,0,988,600>	;绘制区域，就是窗口的 client area
 
+	; 窗框厚度（会占用drawingArea）
+	WINDOW_FRAME_WIDTH		DWORD		15	; 窗框横向厚度（左右合计）
+	WINDOW_FRAME_HEIGHT		DWORD		60	; 窗框纵向厚度（上下合计）
 	
 	;--------------编号-----------------------------
 
