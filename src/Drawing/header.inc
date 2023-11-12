@@ -76,6 +76,10 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	; 窗框厚度（会占用drawingArea）
 	WINDOW_FRAME_WIDTH		DWORD		15	; 窗框横向厚度（左右合计）
 	WINDOW_FRAME_HEIGHT		DWORD		60	; 窗框纵向厚度（上下合计）
+
+	; 窗口最大尺寸
+	MAX_WINDOW_WIDTH		DWORD		988
+	MAX_WINDOW_HEIGHT		DWORD		600
 	
 	;--------------编号-----------------------------
 

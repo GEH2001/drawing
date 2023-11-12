@@ -73,11 +73,9 @@ WindowResize PROC, hWnd: HWND, bitmap:BITMAP
         mov eax, bitmap.bmHeight
         mov h, eax
         mov hb, eax
-        mov eax, drawingArea.right
-        sub eax, WINDOW_FRAME_WIDTH
+        mov eax, MAX_WINDOW_WIDTH
         mov ww, eax
-        mov eax, drawingArea.bottom
-        sub eax, WINDOW_FRAME_HEIGHT
+        mov eax, MAX_WINDOW_HEIGHT
         mov hw, eax
 
         ; 比较宽度
@@ -120,7 +118,7 @@ WindowResize PROC, hWnd: HWND, bitmap:BITMAP
         mov drawingArea.bottom, eax
 
         ; 调整窗口位置和大小
-        INVOKE MoveWindow, hWnd, windowX, windowY, drawingArea.right, drawingArea.bottom, TRUE
+        INVOKE MoveWindow, hWnd, windowX, 0, drawingArea.right, drawingArea.bottom, TRUE
         ret
 WindowResize ENDP
 
@@ -134,29 +132,19 @@ DrawImage PROC, hWnd: HWND
         LOCAL imageHeight:DWORD
         LOCAL ps:PAINTSTRUCT
 
-        ; 开始绘制
+        ; 加载图像
+        INVOKE LoadImageA, NULL, imagePath, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE
+        mov hBitmap, eax    ; 将返回值保存到 hBitmap 变量中
+        test eax, eax
+        jz exitProc
+        INVOKE GetObject, hBitmap, SIZEOF BITMAP, ADDR bitmap
+        INVOKE WindowResize, hWnd, bitmap
         INVOKE BeginPaint, hWnd, ADDR ps
 
         ; 创建与指定设备兼容的内存设备上下文
         INVOKE CreateCompatibleDC, ps.hdc
         mov hdcMem, eax
-
-        ; 检查文件路径
-        mov edx, imagePath
-        INVOKE MessageBox, 0, edx, OFFSET dialogTitle, MB_OK
-
-        ; 调用 LoadImageA 函数加载图像
-        INVOKE LoadImageA, NULL, imagePath, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE
-        mov hBitmap, eax    ; 将返回值保存到 hBitmap 变量中
-        test eax, eax
-        jz exitProc
-
-        ; 获取位图对象
-        INVOKE GetObject, hBitmap, SIZEOF bitmap, ADDR bitmap
         INVOKE SelectObject, hdcMem, hBitmap
-
-        ; 修改窗口尺寸
-        INVOKE WindowResize, hWnd, bitmap
 
         ; 绘制
         mov eax, drawingArea.right
@@ -208,15 +196,39 @@ Savefile PROC, hWnd: HWND
         LOCAL hdcMem:HANDLE
         LOCAL hOldObj:HANDLE
         LOCAL ps:PAINTSTRUCT
+        LOCAL w:DWORD   ; 图像原始宽度（不含窗框）
+        LOCAL h:DWORD
 
         INVOKE BeginPaint, hWnd, ADDR ps
 
-
-        
-        ; 获取 HDC 的尺寸
-        INVOKE GetDeviceCaps, ps.hdc, HORZRES
+        ; 计算图片的合法宽度
+        mov eax, drawingArea.right
+        sub eax, WINDOW_FRAME_WIDTH
+        mov w, eax
+        mov edx, 0
+        mov ebx, 4
+        ; 执行除法运算
+        div ebx
+        ; 获取余数
+        mov ebx, edx    ; 余数
+        mov eax, 4
+        sub eax, ebx
+        add eax, w
         mov iWidth, eax
-        INVOKE GetDeviceCaps, ps.hdc, VERTRES
+
+        ; 计算图片的合法高度
+        mov eax, drawingArea.bottom
+        sub eax, WINDOW_FRAME_HEIGHT
+        mov h, eax
+        mov edx, 0
+        mov ebx, 4
+        ; 执行除法运算
+        div ebx
+        ; 获取余数
+        mov ebx, edx    ; 余数
+        mov eax, 4
+        sub eax, ebx
+        add eax, h
         mov iHeight, eax
 
         ; 填充 bmpInfo 各字段
@@ -241,11 +253,13 @@ Savefile PROC, hWnd: HWND
         INVOKE SelectObject, hdcMem, hBmp
         mov hOldObj, eax
 
-        ; 将 HDC 的内容用 BitBlt 绘制到缓存中
+        ; 将 HDC 的内容绘制到缓存中
         mov eax, drawingArea.right
         sub eax, WINDOW_FRAME_WIDTH
+        sub eax, 2
         mov ebx, drawingArea.bottom
         sub ebx, WINDOW_FRAME_HEIGHT
+        sub ebx, 2
         INVOKE StretchBlt, hdcMem, 0, 0, iWidth, iHeight, ps.hdc, 1, 1, eax, ebx, SRCCOPY
 
         ; 将 bmInfoHeader 变量初始化为零
