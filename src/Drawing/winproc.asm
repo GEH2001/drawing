@@ -12,9 +12,36 @@ INCLUDE header.inc
 
 ;lMouseFlag	DWORD	0		;鼠标左键状态：down(1)、up(0)，只有down的时候才会绘制
 ;drawingArea	RECT <0,0,988,600>	;绘制区域，就是窗口的 client area
+;修改颜色
+acrCustClr		COLORREF	16 DUP(0)
 
 
 .code
+
+; 选择颜色
+ChangeColor PROC, hWnd:HWND
+		LOCAL cc:CHOOSECOLOR 
+
+		mov cc.lStructSize, SIZEOF cc
+		mov eax, hWnd
+		mov cc.hwndOwner, eax
+		mov cc.lpCustColors, OFFSET acrCustClr
+		mov eax, pen_color
+		mov cc.rgbResult, eax
+		mov eax, CC_FULLOPEN
+		or eax, CC_RGBINIT
+		mov cc.Flags, eax
+
+		INVOKE ChooseColor, ADDR cc
+		test eax, eax
+		jz error
+		mov eax, cc.rgbResult
+		mov pen_color, eax
+		
+	error:
+		ret
+ChangeColor ENDP
+
 
 ; 处理 VM_COMMAND
 HandleCommand PROC USES ebx ecx,
@@ -52,26 +79,9 @@ HandleCommand PROC USES ebx ecx,
 	.ELSEIF wParam == IDM_MENU_SIZE_SEVEN
 		mov pen_width, 7 
 	;更改颜色
-	.ELSEIF wParam == IDM_MENU_COLOR_BLACK
-		mov pen_color, 0h
-	.ELSEIF wParam == IDM_MENU_COLOR_RED
-		mov pen_color, 0FFh
-	.ELSEIF wParam == IDM_MENU_COLOR_ORANGE
-		mov pen_color, 0A5FFh
-	.ELSEIF wParam == IDM_MENU_COLOR_GREEN
-		mov pen_color, 0FF00h
-	.ELSEIF wParam == IDM_MENU_COLOR_YELLOW
-		mov pen_color, 0FFFFh
-	.ELSEIF wParam == IDM_MENU_COLOR_PURPLE
-		mov pen_color, 0FF00FFh
-	.ELSEIF wParam == IDM_MENU_COLOR_CYAN
-		mov pen_color, 0FFFF00h
-	.ELSEIF wParam == IDM_MENU_COLOR_BLUE
-		mov pen_color, 0FF0000h
-	.ELSEIF wParam == IDM_MENU_COLOR_CELESTE
-		mov pen_color, 0FF7F00h
-	.ELSEIF wParam == IDM_MENU_COLOR_WHITE
-		mov pen_color, 0FFFFFFh
+	.ELSEIF wParam == IDM_MENU_COLOR_CHANGE
+		INVOKE ChangeColor, hWnd
+
 	; 选择文件
 	.ELSEIF wParam == IDM_MENU_FILE_OPEN
 		INVOKE Openfile, hWnd

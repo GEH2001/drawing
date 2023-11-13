@@ -65,16 +65,17 @@ CreateMainMenu PROC
 	;ÑÕÉ«
 	INVOKE CreatePopupMenu
 	mov hColorMenu, eax
-	INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_BLACK, ADDR str_menu_color_black
-	INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_RED, ADDR str_menu_color_red
-	INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_ORANGE, ADDR str_menu_color_orange
-	INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_GREEN, ADDR str_menu_color_green
-	INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_YELLOW, ADDR str_menu_color_yellow
-	INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_PURPLE, ADDR str_menu_color_purple
-	INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_CYAN, ADDR str_menu_color_cyan
-	INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_BLUE, ADDR str_menu_color_blue
-	INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_CELESTE, ADDR str_menu_color_celeste
-	INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_WHITE, ADDR str_menu_color_white
+	;INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_BLACK, ADDR str_menu_color_black
+	;INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_RED, ADDR str_menu_color_red
+	;INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_ORANGE, ADDR str_menu_color_orange
+	;INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_GREEN, ADDR str_menu_color_green
+	;INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_YELLOW, ADDR str_menu_color_yellow
+	;INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_PURPLE, ADDR str_menu_color_purple
+	;INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_CYAN, ADDR str_menu_color_cyan
+	;INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_BLUE, ADDR str_menu_color_blue
+	;INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_CELESTE, ADDR str_menu_color_celeste
+	;INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_WHITE, ADDR str_menu_color_white
+	INVOKE AppendMenu, hColorMenu, MF_STRING, IDM_MENU_COLOR_CHANGE, ADDR str_menu_color_change
 	INVOKE AppendMenu, hMenu, MF_POPUP, hColorMenu, ADDR str_menu_color
 
 

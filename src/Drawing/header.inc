@@ -135,6 +135,7 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	IDM_MENU_COLOR_BLUE		equ	478
 	IDM_MENU_COLOR_CELESTE	equ	479
 	IDM_MENU_COLOR_WHITE	equ	480
+	IDM_MENU_COLOR_CHANGE	equ	481
 	
 
 	;--------------字符串-----------------------------
@@ -181,3 +182,5 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	str_menu_color_blue		BYTE	"蓝色", 0
 	str_menu_color_celeste	BYTE	"蔚蓝", 0
 	str_menu_color_white	BYTE	"白色", 0
+
+	str_menu_color_change	BYTE	"更改颜色",0

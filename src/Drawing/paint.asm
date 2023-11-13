@@ -5,6 +5,7 @@
 option casemap:none
 
 INCLUDE header.inc
+INCLUDE comdlg32.inc
 
 ;PUBLIC mode
 PUBLIC lastX
@@ -39,6 +40,7 @@ fixedY	DWORD	0
 char	WPARAM	"2"
 ;ÎÄ×Ö¼ÆÊý
 cnt		DWORD	0
+
 
 .code
 
@@ -122,6 +124,5 @@ Draw_Text PROC, hdc:HDC
 	pop eax
 	ret
 Draw_Text ENDP
-
 
 END
