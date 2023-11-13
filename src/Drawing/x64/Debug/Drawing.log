@@ -1,0 +1,5 @@
+﻿  Assembling file.asm...
+file.asm(1): error A2008: syntax error : .
+file.asm(2): error A2008: syntax error : .
+file.asm(5): fatal error A1000: cannot open file : windows.inc
+C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\BuildCustomizations\masm.targets(70,5): error MSB3721: 命令“ml64.exe /c /nologo /Zi /Fo"x64\Debug\file.obj" /I "C:\DevTools\masm32\include" /W3 /errorReport:prompt  /Tafile.asm”已退出，返回代码为 1。

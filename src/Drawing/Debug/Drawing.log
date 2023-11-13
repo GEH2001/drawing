@@ -1,0 +1,12 @@
+﻿  Assembling winproc.asm...
+winproc.asm(84): warning A6004: procedure argument or local not referenced : lParam
+winproc.asm(164): warning A6004: procedure argument or local not referenced : wParam
+winproc.asm(190): warning A6004: procedure argument or local not referenced : wParam
+winproc.asm(190): warning A6004: procedure argument or local not referenced : lParam
+winproc.asm(211): warning A6004: procedure argument or local not referenced : hWnd
+winproc.asm(211): warning A6004: procedure argument or local not referenced : wParam
+winproc.asm(211): warning A6004: procedure argument or local not referenced : lParam
+winproc.asm(226): warning A6004: procedure argument or local not referenced : lParam
+winproc.asm(293): warning A6004: procedure argument or local not referenced : wParam
+winproc.asm(293): warning A6004: procedure argument or local not referenced : lParam
+  Drawing.vcxproj -> C:\Users\86188\Downloads\drawing-master\src\Debug\Drawing.exe

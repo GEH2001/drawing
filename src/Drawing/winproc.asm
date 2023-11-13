@@ -11,9 +11,7 @@ INCLUDE header.inc
 .data
 
 ;lMouseFlag	DWORD	0		;鼠标左键状态：down(1)、up(0)，只有down的时候才会绘制
-drawingArea	RECT <0,0,800,600>	;绘制区域，就是窗口的 client area
-drawingText LPCTSTR "draw"
-color		DWORD	0
+;drawingArea	RECT <0,0,988,600>	;绘制区域，就是窗口的 client area
 
 
 .code
@@ -26,6 +24,7 @@ HandleCommand PROC USES ebx ecx,
 	;更改画笔类型
 	.IF wParam == IDM_MENU_BRUSH_BASIC
 		mov mode, IDM_MODE_FREEHAND
+		mov pen_style, PS_SOLID
 	.ELSEIF wParam == IDM_MENU_BRUSH_DASH
 		mov pen_style, PS_DASH
 		mov pen_width, 1
@@ -73,6 +72,11 @@ HandleCommand PROC USES ebx ecx,
 		mov pen_color, 0FF7F00h
 	.ELSEIF wParam == IDM_MENU_COLOR_WHITE
 		mov pen_color, 0FFFFFFh
+	; 选择文件
+	.ELSEIF wParam == IDM_MENU_FILE_OPEN
+		INVOKE Openfile, hWnd
+	.ELSEIF wParam == IDM_MENU_FILE_SAVE
+		INVOKE Savefile, hWnd
 
 	.ENDIF
 
@@ -93,7 +97,6 @@ HandleMouseMove PROC USES ebx ecx edx,
 	extern beginY:DWORD
 	extern endX:DWORD
 	extern endY:DWORD
-
 
 	;获取鼠标当前位置：lParam 低16位是x坐标，高16位是y坐标
 	mov ebx, lParam
@@ -123,13 +126,13 @@ HandleMouseMove PROC USES ebx ecx edx,
 			;把end更新为cur
 			mov endX, ecx	;curX
 			mov endY, ebx	;curY
-			INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号VM_PAINT
+			INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号WM_PAINT
 		.ENDIF
 	.ENDIF
 
 	.IF mode == IDM_MODE_ERASE
 		.IF lMouseFlag == 1
-			INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号VM_PAINT
+			INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号WM_PAINT
 		.ENDIF
 	.ENDIF
 
@@ -153,7 +156,7 @@ HandleMouseMove PROC USES ebx ecx edx,
 			;把end更新为cur
 			mov endX, ecx	;curX
 			mov endY, ebx	;curY
-			INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号VM_PAINT
+			INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号WM_PAINT
 		.ENDIF
 	.ENDIF
 
@@ -161,13 +164,26 @@ HandleMouseMove PROC USES ebx ecx edx,
 HandleMouseMove ENDP
 
 ; 鼠标左键按下
-HandleLButtonDown PROC,
+HandleLButtonDown PROC USES ebx,
 	hWnd: HWND, wParam: WPARAM, lParam: LPARAM
+	extern fixedX:DWORD
+	extern fixedY:DWORD
+	extern cnt:DWORD
 
+	;清空文本计数
+	mov cnt,0
 
 	mov lMouseFlag, 1
+
+	.IF mode == IDM_MODE_COLPIC
+		INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号WM_PAINT
+	.ENDIF
+
 	.IF mode == IDM_MODE_TEXT
-		INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号VM_PAINT
+		mov ebx, curX
+		mov fixedX, ebx
+		mov ebx, curY
+		mov fixedY, ebx
 	.ENDIF
 
 	ret
@@ -193,6 +209,21 @@ HandleLButtonUp	PROC,
 
 	ret
 HandleLButtonUp	ENDP
+
+;键盘按下
+HandleKeyboard PROC,
+	hWnd: HWND, wParam: WPARAM, lParam: LPARAM
+	extern char:WPARAM
+	extern cnt:DWORD
+
+	.IF mode == IDM_MODE_TEXT
+		push wParam
+		pop char
+		INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号WM_PAINT
+	.ENDIF
+
+	ret
+HandleKeyboard ENDP
 
 ; 重绘
 HandlePaint PROC,
@@ -223,6 +254,11 @@ HandlePaint PROC,
 
 	.IF mode == IDM_MODE_TEXT	;文本
 		INVOKE Draw_Text, ps.hdc
+	.ENDIF
+
+	.IF mode == IDM_MODE_COLPIC	;取色器
+		INVOKE GetPixel, ps.hdc, curX, curY
+		mov pen_color, eax
 	.ENDIF
 
 	.IF mode == IDM_MODE_SHAPE_LINE	;直线

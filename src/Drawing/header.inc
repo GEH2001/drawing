@@ -21,7 +21,8 @@ HandleCommand		PROTO hWnd:HWND, wParam:WPARAM, lParam:LPARAM		; VM_COMMAND ´¦Àíº
 HandleMouseMove		PROTO hWnd:HWND, wParam:WPARAM, lParam:LPARAM		; VM_MOUSEMOVE ´¦Àíº¯Êý
 HandleLButtonDown	PROTO hWnd:HWND, wParam:WPARAM, lParam:LPARAM		; VM_LBUTTONDOWN
 HandleLButtonUp		PROTO hWnd:HWND, wParam:WPARAM, lParam:LPARAM		; VM_LBUTTONUP
-HandlePaint			PROTO hWnd:HWND, wParam:WPARAM, lParam:LPARAM		; VM_PAINT
+HandleKeyboard		PROTO hwnd:HWND, wParam:WPARAM, lParam:LPARAM		; VM_CHAR
+HandlePaint			PROTO hWnd:HWND, wParam:WPARAM, lParam:LPARAM		; VM_PAIN
 
 ; paint.asm		»æÖÆº¯Êý
 Erase				PROTO hdc:HDC	; ÏðÆ¤²Á
@@ -32,8 +33,11 @@ Draw_Circle			PROTO hdc:HDC	; Ô²ÐÎ
 Draw_Circle_Inverse	PROTO hdc:HDC
 Draw_Rect			PROTO hdc:HDC	; ¾ØÐÎ
 Draw_Rect_Inverse	PROTO hdc:HDC
-Draw_Text			PROTO hdc:HDC
+Draw_Text			PROTO hdc:HDC	; ÎÄ±¾
 
+;file.asm		ÎÄ¼þ´¦Àí
+Openfile			PROTO hWnd:HWND	; ´ò¿ªÎÄ¼þ
+Savefile			PROTO hWnd:HWND	; ±£´æÎÄ¼þ
 
 ;----------------------const-----------------------------
 
@@ -58,6 +62,7 @@ Draw_Text			PROTO hdc:HDC
 	;mouseStatus	;¶¨Òå¸ü¶àµÄ×´Ì¬
 
 
+
 	; BUG: ÕâÐ©±äÁ¿Èç¹ûÔÚÕâÀï¶¨Òå£¬»æÍ¼»áÊ§Ð§£¨²»ÖªµÀÎªÊ²Ã´£©
 	;Êó±êÎ»ÖÃ
 	;curX	DWORD	0	;µ±Ç°×ø±ê
@@ -67,7 +72,16 @@ Draw_Text			PROTO hdc:HDC
 	;endX	DWORD	0	;Freehand£º	LineTo
 	;endY	DWORD	0
 
+	; »æÍ¼Çø´óÐ¡
+	drawingArea				RECT		<0,0,988,600>	;»æÖÆÇøÓò£¬¾ÍÊÇ´°¿ÚµÄ client area
 
+	; ´°¿òºñ¶È£¨»áÕ¼ÓÃdrawingArea£©
+	WINDOW_FRAME_WIDTH		DWORD		15	; ´°¿òºáÏòºñ¶È£¨×óÓÒºÏ¼Æ£©
+	WINDOW_FRAME_HEIGHT		DWORD		60	; ´°¿ò×ÝÏòºñ¶È£¨ÉÏÏÂºÏ¼Æ£©
+
+	; ´°¿Ú×î´ó³ß´ç
+	MAX_WINDOW_WIDTH		DWORD		988
+	MAX_WINDOW_HEIGHT		DWORD		600
 	
 	;--------------±àºÅ-----------------------------
 
@@ -95,7 +109,6 @@ Draw_Text			PROTO hdc:HDC
 	IDM_MENU_TOOL_ERASER	equ 441
 	IDM_MENU_TOOL_TEXT		equ	442
 	IDM_MENU_TOOL_COLPIC	equ	443		;color picker
-	IDM_MENU_TOOL_SELECT	equ 444
 
 	;²Ëµ¥-ÐÎ×´£ºÖ±Ïß£¬Ô²ÐÎ£¬Èý½ÇÐÎ£¬¾ØÐÎ
 	IDM_MENU_SHAPE			equ	450

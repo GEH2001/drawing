@@ -8,7 +8,6 @@ INCLUDE header.inc
 
 .data
 
-
 .code
 CreateMainMenu PROC
 	extern hMenu:HMENU		;main.asm
@@ -44,7 +43,6 @@ CreateMainMenu PROC
 	INVOKE AppendMenu, hToolMenu, MF_STRING, IDM_MENU_TOOL_ERASER, ADDR str_menu_tool_eraser
 	INVOKE AppendMenu, hToolMenu, MF_STRING, IDM_MENU_TOOL_TEXT, ADDR str_menu_tool_text
 	INVOKE AppendMenu, hToolMenu, MF_STRING, IDM_MENU_TOOL_COLPIC, ADDR str_menu_tool_colpic
-	INVOKE AppendMenu, hToolMenu, MF_STRING, IDM_MENU_TOOL_SELECT, ADDR str_menu_tool_select
 	INVOKE AppendMenu, hMenu, MF_POPUP, hToolMenu, ADDR str_menu_tool
 
 	;ÐÎ×´

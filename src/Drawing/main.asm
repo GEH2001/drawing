@@ -55,10 +55,10 @@ WinMain PROC,
 	mov wc.hCursor, eax
 	; register window class
 	INVOKE RegisterClassEx, ADDR wc
-	; create window app		800 × 600
+	; create window app		988 × 600
 	INVOKE CreateWindowEx, NULL, ADDR className, ADDR appName, \
 		WS_OVERLAPPEDWINDOW AND (NOT WS_SIZEBOX) AND (NOT WS_MAXIMIZEBOX) AND (NOT WS_MINIMIZEBOX), CW_USEDEFAULT, \
-		CW_USEDEFAULT, 800, 600, NULL, hMenu, \
+		CW_USEDEFAULT, 988, 600, NULL, hMenu, \
 		hInst, NULL
 	mov hwnd, eax
 	; Show and draw the window.
@@ -94,9 +94,13 @@ WndProc PROC USES ebx ecx edx,
 
 	.ELSEIF uMsg == WM_LBUTTONUP	; 鼠标左键释放
 		INVOKE HandleLButtonUp, hWnd, wParam, lParam
+	
+	.ELSEIF uMsg == WM_CHAR		; 输入文字
+		INVOKE HandleKeyboard, hWnd, wParam, lParam
 
 	.ELSEIF uMsg == WM_PAINT	; 窗口重绘
 		INVOKE HandlePaint, hWnd, wParam, lParam
+
 
 	.ELSE
 		INVOKE DefWindowProc, hWnd, uMsg, wParam, lParam	; 默认消息处理函数

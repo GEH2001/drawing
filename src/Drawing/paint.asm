@@ -15,6 +15,11 @@ PUBLIC beginX
 PUBLIC beginY
 PUBLIC endX
 PUBLIC endY
+PUBLIC fixedX
+PUBLIC fixedY
+
+PUBLIC char
+PUBLIC cnt
 
 .data
 ;mode    DWORD   ?	;绘图模式：画画、橡皮
@@ -27,7 +32,13 @@ beginX	DWORD	0	;Freehand：	MoveTo
 beginY	DWORD	0
 endX	DWORD	0	;Freehand：	LineTo
 endY	DWORD	0
-drawingText	LPCTSTR "ward"
+fixedX	DWORD	0	;drawText
+fixedY	DWORD	0
+
+;键盘输入
+char	WPARAM	"2"
+;文字计数
+cnt		DWORD	0
 
 .code
 
@@ -96,7 +107,19 @@ Draw_Rect_Inverse ENDP
 
 ;文本
 Draw_Text PROC, hdc:HDC
-	INVOKE TextOutA, hdc, curX, curY, ADDR drawingText, 4
+	push eax
+	MOV eax,cnt
+	IMUL eax,5
+	add	eax,fixedX
+	INVOKE TextOutA, hdc, eax, fixedY, ADDR char, 1
+	inc cnt
+	inc cnt
+	.IF char == "f" || char == "i" || char == "j" || char == "l" || char == "t" || char == " "
+		dec cnt
+	.ELSEIF char == "m" || char == "w"
+		inc cnt
+	.ENDIF
+	pop eax
 	ret
 Draw_Text ENDP
 
