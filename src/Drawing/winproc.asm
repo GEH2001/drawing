@@ -46,8 +46,21 @@ ChangeColor ENDP
 ; 处理 VM_COMMAND
 HandleCommand PROC USES ebx ecx,
 	hWnd: HWND, wParam: WPARAM, lParam: LPARAM
-	
-	;extern mode:DWORD	; 绘制模式，定义在 paint.asm
+
+	LOCAL cursor:LPCTSTR
+	LOCAL hCursor:HCURSOR
+
+	;光标形状改回
+	.IF wParam != IDM_MENU_TOOL_TEXT
+		.IF wParam != IDM_MENU_TOOL_COLPIC
+			mov cursor, IDC_ARROW  
+			INVOKE LoadCursor, NULL, cursor
+			mov hCursor, eax
+			INVOKE SetClassLong, hWnd, GCL_HCURSOR, hCursor
+			INVOKE ShowCursor, TRUE
+		.ENDIF
+	.ENDIF
+
 	;更改画笔类型
 	.IF wParam == IDM_MENU_BRUSH_BASIC
 		mov mode, IDM_MODE_FREEHAND
@@ -60,8 +73,20 @@ HandleCommand PROC USES ebx ecx,
 		mov mode, IDM_MODE_ERASE
 	.ELSEIF wParam == IDM_MENU_TOOL_TEXT
 		mov mode, IDM_MODE_TEXT
+		; 修改光标形状
+		mov cursor, IDC_IBEAM 
+		INVOKE LoadCursor, NULL, cursor
+		mov hCursor, eax
+		INVOKE SetClassLong, hWnd, GCL_HCURSOR, hCursor
+		INVOKE ShowCursor, TRUE
 	.ELSEIF wParam == IDM_MENU_TOOL_COLPIC
 		mov mode, IDM_MODE_COLPIC
+		; 修改光标形状
+		mov cursor, IDC_CROSS  
+		INVOKE LoadCursor, NULL, cursor
+		mov hCursor, eax
+		INVOKE SetClassLong, hWnd, GCL_HCURSOR, hCursor
+		INVOKE ShowCursor, TRUE
 	;选择形状
 	.ELSEIF wParam == IDM_MENU_SHAPE_LINE
 		mov mode, IDM_MODE_SHAPE_LINE
