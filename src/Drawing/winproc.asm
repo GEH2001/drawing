@@ -288,6 +288,8 @@ HandlePaint PROC,
 	.ENDIF
 
 	.IF mode == IDM_MODE_TEXT	;文本
+		; 设置文字颜色		
+		INVOKE SetTextColor, ps.hdc, pen_color
 		INVOKE Draw_Text, ps.hdc
 	.ENDIF
 
