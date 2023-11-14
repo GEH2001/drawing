@@ -35,6 +35,7 @@ WinMain PROC,
 	LOCAL wc: WNDCLASSEX
 	LOCAL msg: MSG
 	LOCAL hwnd: HWND
+	LOCAL hdc:HDC
 
 	INVOKE CreateMainMenu	; 初始化菜单
 	; 填充 WNDCLASSEX 类
@@ -55,6 +56,7 @@ WinMain PROC,
 	mov wc.hCursor, eax
 	; register window class
 	INVOKE RegisterClassEx, ADDR wc
+
 	; create window app		988 × 600
 	INVOKE CreateWindowEx, NULL, ADDR className, ADDR appName, \
 		WS_OVERLAPPEDWINDOW AND (NOT WS_SIZEBOX) AND (NOT WS_MAXIMIZEBOX) AND (NOT WS_MINIMIZEBOX), CW_USEDEFAULT, \

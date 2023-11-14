@@ -61,8 +61,6 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	lMouseFlag	DWORD	0		;鼠标左键状态：down(1)、up(0)，只有down的时候才会绘制
 	;mouseStatus	;定义更多的状态
 
-
-
 	; BUG: 这些变量如果在这里定义，绘图会失效（不知道为什么）
 	;鼠标位置
 	;curX	DWORD	0	;当前坐标

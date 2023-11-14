@@ -14,7 +14,10 @@ INCLUDE header.inc
 ;drawingArea	RECT <0,0,988,600>	;绘制区域，就是窗口的 client area
 ;修改颜色
 acrCustClr		COLORREF	16 DUP(0)
-
+; 内存缓存
+memDC		HDC			?
+memBitmap	HBITMAP		?
+isDrawing	DWORD		0
 
 .code
 
@@ -49,6 +52,8 @@ HandleCommand PROC USES ebx ecx,
 
 	LOCAL cursor:LPCTSTR
 	LOCAL hCursor:HCURSOR
+	LOCAL ps:PAINTSTRUCT 
+	LOCAL hdc:HDC
 
 	;光标形状改回
 	.IF wParam != IDM_MENU_TOOL_TEXT
@@ -106,13 +111,28 @@ HandleCommand PROC USES ebx ecx,
 	;更改颜色
 	.ELSEIF wParam == IDM_MENU_COLOR_CHANGE
 		INVOKE ChangeColor, hWnd
-
 	; 选择文件
 	.ELSEIF wParam == IDM_MENU_FILE_OPEN
 		INVOKE Openfile, hWnd
 	.ELSEIF wParam == IDM_MENU_FILE_SAVE
 		INVOKE Savefile, hWnd
+	.ENDIF
 
+	; 保存当前画面（仅用于形状）
+	.IF wParam == IDM_MENU_SHAPE_CIRCLE || wParam == IDM_MENU_SHAPE_LINE || wParam == IDM_MENU_SHAPE_RECT
+		; 创建内存DC和内存位图
+		INVOKE GetDC, hWnd
+		mov hdc, eax
+		INVOKE CreateCompatibleDC, hdc
+		mov memDC, eax
+		INVOKE CreateCompatibleBitmap, hdc, 988, 600
+		mov memBitmap, eax
+		INVOKE SelectObject, memDC, memBitmap
+		INVOKE ReleaseDC, hWnd, hdc
+		
+		INVOKE BeginPaint, hWnd, ADDR ps
+		INVOKE BitBlt, memDC, 0, 0, drawingArea.right, drawingArea.bottom, ps.hdc, 0, 0, SRCCOPY
+		INVOKE EndPaint, hWnd, ADDR ps
 	.ENDIF
 
 	ret
@@ -188,9 +208,12 @@ HandleMouseMove PROC USES ebx ecx edx,
 				mov eax, endY
 				mov lastY, eax
 			.ENDIF
+
 			;把end更新为cur
 			mov endX, ecx	;curX
 			mov endY, ebx	;curY
+
+			;重绘
 			INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号WM_PAINT
 		.ENDIF
 	.ENDIF
@@ -212,13 +235,13 @@ HandleLButtonDown PROC USES ebx,
 
 	.IF mode == IDM_MODE_COLPIC
 		INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号WM_PAINT
-	.ENDIF
-
-	.IF mode == IDM_MODE_TEXT
+	.ELSEIF mode == IDM_MODE_TEXT
 		mov ebx, curX
 		mov fixedX, ebx
 		mov ebx, curY
 		mov fixedY, ebx
+	.ELSEIF mode == IDM_MODE_SHAPE_LINE || mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT
+		mov isDrawing, 1
 	.ENDIF
 
 	ret
@@ -233,6 +256,7 @@ HandleLButtonUp	PROC,
 	extern beginY:DWORD
 	extern endX:DWORD
 	extern endY:DWORD
+	LOCAL ps:PAINTSTRUCT
 
 	mov lastX, 0
 	mov lastY, 0
@@ -241,6 +265,13 @@ HandleLButtonUp	PROC,
 	mov beginY, 0
 	mov endY, 0
 	mov	lMouseFlag, 0
+
+	.IF mode == IDM_MODE_SHAPE_LINE || mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT
+		mov isDrawing, 0
+		INVOKE BeginPaint, hWnd, ADDR ps
+		INVOKE BitBlt, memDC, 0, 0, drawingArea.right, drawingArea.bottom, ps.hdc, 0, 0, SRCCOPY
+		INVOKE EndPaint, hWnd, ADDR ps
+	.ENDIF
 
 	ret
 HandleLButtonUp	ENDP
@@ -277,6 +308,10 @@ HandlePaint PROC,
 	INVOKE CreatePen, pen_style, 10, 0FFFFFFh
 	mov hPenInverse, eax
 
+	;从内存加载旧图像（仅适用于绘制形状）
+	.IF mode == IDM_MODE_SHAPE_LINE || mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT
+		INVOKE BitBlt, ps.hdc, 0, 0, drawingArea.right, drawingArea.bottom, memDC, 0, 0, SRCCOPY
+	.ENDIF
 
 	.IF mode == IDM_MODE_FREEHAND	; 自由绘制
 		INVOKE SelectObject, ps.hdc, hPen
@@ -300,8 +335,8 @@ HandlePaint PROC,
 
 	.IF mode == IDM_MODE_SHAPE_LINE	;直线
 		;擦除前图
-		INVOKE SelectObject, ps.hdc, hPenInverse
-		INVOKE Draw_Line_Inverse, ps.hdc
+		;INVOKE SelectObject, ps.hdc, hPenInverse
+		;INVOKE Draw_Line_Inverse, ps.hdc
 		;绘画新图
 		INVOKE SelectObject, ps.hdc, hPen
 		INVOKE Draw_Line, ps.hdc
@@ -309,8 +344,8 @@ HandlePaint PROC,
 
 	.IF mode == IDM_MODE_SHAPE_CIRCLE	;圆
 		;擦除前图
-		INVOKE SelectObject, ps.hdc, hPenInverse
-		INVOKE Draw_Circle_Inverse, ps.hdc
+		;INVOKE SelectObject, ps.hdc, hPenInverse
+		;INVOKE Draw_Circle_Inverse, ps.hdc
 		;绘画新图
 		INVOKE SelectObject, ps.hdc, hPen
 		INVOKE Draw_Circle, ps.hdc
@@ -318,8 +353,8 @@ HandlePaint PROC,
 
 	.IF mode == IDM_MODE_SHAPE_RECT	;矩形
 		;擦除前图
-		INVOKE SelectObject, ps.hdc, hPenInverse
-		INVOKE Draw_Rect_Inverse, ps.hdc
+		;INVOKE SelectObject, ps.hdc, hPenInverse
+		;INVOKE Draw_Rect_Inverse, ps.hdc
 		;绘画新图
 		INVOKE SelectObject, ps.hdc, hPen
 		INVOKE Draw_Rect, ps.hdc
