@@ -52,7 +52,11 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	pen_style		DWORD	PS_SOLID
 	pen_width		DWORD	3
 	pen_color		DWORD	0h
+	fill_color		DWORD	0ffffffh
 
+	;形状属性
+	border			DWORD	1	;默认有边框
+	fill			DWORD	0	;默认无填充
 	
 	;橡皮擦
 	eraser_size		DWORD	10
@@ -121,20 +125,12 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	IDM_MENU_SIZE_FIVE		equ	463
 	IDM_MENU_SIZE_SEVEN		equ 464
 
-	;菜单-颜色：黑色、红色、绿色、黄色、蓝色、白色
-	IDM_MENU_COLOR			equ	470
-	IDM_MENU_COLOR_BLACK	equ	471
-	IDM_MENU_COLOR_RED		equ	472
-	IDM_MENU_COLOR_ORANGE	equ	473
-	IDM_MENU_COLOR_GREEN	equ	474
-	IDM_MENU_COLOR_YELLOW	equ	475
-	IDM_MENU_COLOR_PURPLE	equ	476
-	IDM_MENU_COLOR_CYAN		equ	477
-	IDM_MENU_COLOR_BLUE		equ	478
-	IDM_MENU_COLOR_CELESTE	equ	479
-	IDM_MENU_COLOR_WHITE	equ	480
-	IDM_MENU_COLOR_CHANGE	equ	481
-	
+	;菜单-颜色:线条、无填充、色彩填充
+	IDM_MENU_COLOR					equ	470
+	IDM_MENU_COLOR_LINE_NULL		equ	471
+	IDM_MENU_COLOR_LINE_COLOR		equ 472
+	IDM_MENU_COLOR_FILL_NULL		equ	473
+	IDM_MENU_COLOR_FILL_COLOR		equ	474	
 
 	;--------------字符串-----------------------------
 	
@@ -169,16 +165,10 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	str_menu_size_seven		BYTE	"7 像素", 0
 
 	;颜色
-	str_menu_color			BYTE	"颜色", 0
-	str_menu_color_black	BYTE	"黑色", 0
-	str_menu_color_red		BYTE	"红色", 0
-	str_menu_color_orange	BYTE	"橙色", 0
-	str_menu_color_green	BYTE	"绿色", 0
-	str_menu_color_yellow	BYTE	"黄色", 0
-	str_menu_color_purple	BYTE	"紫色", 0
-	str_menu_color_cyan		BYTE	"青色", 0
-	str_menu_color_blue		BYTE	"蓝色", 0
-	str_menu_color_celeste	BYTE	"蔚蓝", 0
-	str_menu_color_white	BYTE	"白色", 0
-
-	str_menu_color_change	BYTE	"更改颜色",0
+	str_menu_color				BYTE	"颜色", 0
+	str_menu_color_line			BYTE	"线条颜色",0
+	str_menu_color_line_null	BYTE	"无轮廓",0
+	str_menu_color_line_color	BYTE	"选择颜色",0
+	str_menu_color_fill			BYTE	"填充颜色",0
+	str_menu_color_fill_null	BYTE	"无填充",0
+	str_menu_color_fill_color	BYTE	"选择颜色",0

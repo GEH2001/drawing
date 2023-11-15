@@ -21,8 +21,8 @@ isDrawing	DWORD		0
 
 .code
 
-; 选择颜色
-ChangeColor PROC, hWnd:HWND
+; 选择线条颜色
+ChangeColorLine PROC, hWnd:HWND
 		LOCAL cc:CHOOSECOLOR 
 
 		mov cc.lStructSize, SIZEOF cc
@@ -40,10 +40,37 @@ ChangeColor PROC, hWnd:HWND
 		jz error
 		mov eax, cc.rgbResult
 		mov pen_color, eax
+		mov border, 1
 		
 	error:
 		ret
-ChangeColor ENDP
+ChangeColorLine ENDP
+
+
+; 选择填充颜色
+ChangeColorFill PROC, hWnd:HWND
+		LOCAL cc:CHOOSECOLOR 
+
+		mov cc.lStructSize, SIZEOF cc
+		mov eax, hWnd
+		mov cc.hwndOwner, eax
+		mov cc.lpCustColors, OFFSET acrCustClr
+		mov eax, fill_color
+		mov cc.rgbResult, eax
+		mov eax, CC_FULLOPEN
+		or eax, CC_RGBINIT
+		mov cc.Flags, eax
+
+		INVOKE ChooseColor, ADDR cc
+		test eax, eax
+		jz error
+		mov eax, cc.rgbResult
+		mov fill_color, eax
+		mov fill, 1
+		
+	error:
+		ret
+ChangeColorFill ENDP
 
 
 ; 处理 VM_COMMAND
@@ -109,8 +136,14 @@ HandleCommand PROC USES ebx ecx,
 	.ELSEIF wParam == IDM_MENU_SIZE_SEVEN
 		mov pen_width, 7 
 	;更改颜色
-	.ELSEIF wParam == IDM_MENU_COLOR_CHANGE
-		INVOKE ChangeColor, hWnd
+	.ELSEIF wParam == IDM_MENU_COLOR_LINE_NULL
+		mov border, 0
+	.ELSEIF wParam == IDM_MENU_COLOR_LINE_COLOR
+		INVOKE ChangeColorLine, hWnd
+	.ELSEIF wParam == IDM_MENU_COLOR_FILL_NULL
+		mov fill, 0
+	.ELSEIF wParam == IDM_MENU_COLOR_FILL_COLOR
+		INVOKE ChangeColorFill, hWnd
 	; 选择文件
 	.ELSEIF wParam == IDM_MENU_FILE_OPEN
 		INVOKE Openfile, hWnd
@@ -297,16 +330,29 @@ HandlePaint PROC,
 
 	LOCAL ps:PAINTSTRUCT
 	LOCAL hPen:HPEN
-	LOCAL hPenInverse:HPEN
+	LOCAL brush:HBRUSH
+	LOCAL hBrush:HBRUSH
+	LOCAL hOldBrush:HBRUSH
 
 	INVOKE BeginPaint, hWnd, ADDR ps
 
 	;自定义画笔
-	INVOKE CreatePen, pen_style, pen_width, pen_color
-	mov hPen, eax
-	;实时消除用画笔
-	INVOKE CreatePen, pen_style, 10, 0FFFFFFh
-	mov hPenInverse, eax
+	.IF mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT
+		.IF border == 0
+			INVOKE CreatePen, pen_style, pen_width, fill_color
+			mov hPen, eax
+		.ELSE
+			INVOKE CreatePen, pen_style, pen_width, pen_color
+			mov hPen, eax
+		.ENDIF
+	.ELSE
+		INVOKE CreatePen, pen_style, pen_width, pen_color
+		mov hPen, eax
+	.ENDIF
+	INVOKE GetStockObject, NULL_BRUSH
+	mov brush, eax
+	INVOKE CreateSolidBrush, fill_color
+	mov hBrush, eax
 
 	;从内存加载旧图像（仅适用于绘制形状）
 	.IF mode == IDM_MODE_SHAPE_LINE || mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT
@@ -334,31 +380,35 @@ HandlePaint PROC,
 	.ENDIF
 
 	.IF mode == IDM_MODE_SHAPE_LINE	;直线
-		;擦除前图
-		;INVOKE SelectObject, ps.hdc, hPenInverse
-		;INVOKE Draw_Line_Inverse, ps.hdc
-		;绘画新图
 		INVOKE SelectObject, ps.hdc, hPen
 		INVOKE Draw_Line, ps.hdc
 	.ENDIF
 
 	.IF mode == IDM_MODE_SHAPE_CIRCLE	;圆
-		;擦除前图
-		;INVOKE SelectObject, ps.hdc, hPenInverse
-		;INVOKE Draw_Circle_Inverse, ps.hdc
-		;绘画新图
-		INVOKE SelectObject, ps.hdc, hPen
+		INVOKE SelectObject, ps.hdc, hPen	;轮廓画笔	
+		.IF fill == 0
+			INVOKE SelectObject, ps.hdc, brush	;空心画刷
+		.ELSE
+			INVOKE SelectObject, ps.hdc, hBrush
+			mov hOldBrush, eax
+		.ENDIF
 		INVOKE Draw_Circle, ps.hdc
 	.ENDIF
 
 	.IF mode == IDM_MODE_SHAPE_RECT	;矩形
-		;擦除前图
-		;INVOKE SelectObject, ps.hdc, hPenInverse
-		;INVOKE Draw_Rect_Inverse, ps.hdc
-		;绘画新图
 		INVOKE SelectObject, ps.hdc, hPen
+		.IF fill == 0
+			INVOKE SelectObject, ps.hdc, brush	;空心画刷
+		.ELSE
+			INVOKE SelectObject, ps.hdc, hBrush
+			mov hOldBrush, eax
+		.ENDIF
 		INVOKE Draw_Rect, ps.hdc
 	.ENDIF
+
+	; 回收资源
+	INVOKE SelectObject, ps.hdc, hOldBrush
+	INVOKE DeleteObject, hBrush
 	INVOKE EndPaint, hWnd, ADDR ps
 
 	ret
