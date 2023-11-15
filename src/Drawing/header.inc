@@ -32,6 +32,7 @@ Draw_Circle			PROTO hdc:HDC	; 圆形
 Draw_Rect			PROTO hdc:HDC	; 矩形
 Draw_Round_Rect		PROTO hdc:HDC	; 圆角矩形
 Draw_Text			PROTO hdc:HDC	; 文本
+Draw_Triangle		PROTO hdc:HDC	; 三角形
 
 ;file.asm		文件处理
 Openfile			PROTO hWnd:HWND	; 打开文件
@@ -94,6 +95,7 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	IDM_MODE_SHAPE_ROUND_RECT	equ 506		;绘制圆角矩形
 	IDM_MODE_TEXT				equ 507		;输入文字
 	IDM_MODE_COLPIC				equ 508		;选择颜色
+	IDM_MODE_SHAPE_TRIANGLE		equ 509		;绘制三角形
 
 	;菜单-文件：打开，保存
 	IDM_MENU_FILE			equ 420
@@ -117,6 +119,7 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	IDM_MENU_SHAPE_CIRCLE		equ	452
 	IDM_MENU_SHAPE_RECT			equ	453
 	IDM_MENU_SHAPE_ROUND_RECT	equ	454
+	IDM_MENU_SHAPE_TRIANGLE		equ 455
 
 	;菜单-大小：1px, 3px, 5px, 7px
 	IDM_MENU_SIZE			equ	460
@@ -157,6 +160,7 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	str_menu_shape_circle		BYTE	"圆形", 0
 	str_menu_shape_rect			BYTE	"矩形", 0
 	str_menu_shape_round_rect	BYTE	"圆角矩形",0
+	str_menu_shape_triangle		BYTE	"三角形", 0
 
 	;大小
 	str_menu_size			BYTE	"大小", 0

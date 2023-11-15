@@ -111,6 +111,26 @@ Draw_Round_Rect PROC, hdc:HDC
 	ret
 Draw_Round_Rect ENDP
 
+;三角形
+Draw_Triangle PROC, hdc:HDC
+	LOCAL pX:DWORD
+	LOCAL pY:DWORD
+
+	mov eax, beginX
+	add eax, beginX
+	sub eax, endX
+	mov pX, eax
+	mov eax, endY
+	mov pY, eax
+	INVOKE MoveToEx, hdc, beginX, beginY, NULL
+	INVOKE LineTo, hdc, endX, endY
+	INVOKE MoveToEx, hdc, endX, endY, NULL
+	INVOKE LineTo, hdc, pX, pY
+	INVOKE MoveToEx, hdc, pX, pY, NULL
+	INVOKE LineTo, hdc, beginX, beginY
+	ret
+Draw_Triangle ENDP
+
 ;文本
 Draw_Text PROC, hdc:HDC
 	push eax
