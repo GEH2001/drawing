@@ -28,11 +28,9 @@ HandlePaint			PROTO hWnd:HWND, wParam:WPARAM, lParam:LPARAM		; VM_PAIN
 Erase				PROTO hdc:HDC	; 橡皮擦
 Freehand			PROTO hdc:HDC	; 自由绘制
 Draw_Line			PROTO hdc:HDC	; 直线
-Draw_Line_Inverse	PROTO hdc:HDC
 Draw_Circle			PROTO hdc:HDC	; 圆形
-Draw_Circle_Inverse	PROTO hdc:HDC
 Draw_Rect			PROTO hdc:HDC	; 矩形
-Draw_Rect_Inverse	PROTO hdc:HDC
+Draw_Round_Rect		PROTO hdc:HDC	; 圆角矩形
 Draw_Text			PROTO hdc:HDC	; 文本
 
 ;file.asm		文件处理
@@ -88,13 +86,14 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	;--------------编号-----------------------------
 
 	;绘制模式编号
-	IDM_MODE_FREEHAND		equ	501		;自由绘制
-	IDM_MODE_ERASE			equ	502		;橡皮擦
-	IDM_MODE_SHAPE_LINE		equ 503		;绘制直线
-	IDM_MODE_SHAPE_CIRCLE	equ 504		;绘制圆形
-	IDM_MODE_SHAPE_RECT		equ 505		;绘制矩形
-	IDM_MODE_TEXT			equ 506		;输入文字
-	IDM_MODE_COLPIC			equ 507		;选择颜色
+	IDM_MODE_FREEHAND			equ	501		;自由绘制
+	IDM_MODE_ERASE				equ	502		;橡皮擦
+	IDM_MODE_SHAPE_LINE			equ 503		;绘制直线
+	IDM_MODE_SHAPE_CIRCLE		equ 504		;绘制圆形
+	IDM_MODE_SHAPE_RECT			equ 505		;绘制矩形
+	IDM_MODE_SHAPE_ROUND_RECT	equ 506		;绘制圆角矩形
+	IDM_MODE_TEXT				equ 507		;输入文字
+	IDM_MODE_COLPIC				equ 508		;选择颜色
 
 	;菜单-文件：打开，保存
 	IDM_MENU_FILE			equ 420
@@ -112,11 +111,12 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	IDM_MENU_TOOL_TEXT		equ	442
 	IDM_MENU_TOOL_COLPIC	equ	443		;color picker
 
-	;菜单-形状：直线，圆形，三角形，矩形
-	IDM_MENU_SHAPE			equ	450
-	IDM_MENU_SHAPE_LINE		equ	451
-	IDM_MENU_SHAPE_CIRCLE	equ	452
-	IDM_MENU_SHAPE_RECT		equ	454
+	;菜单-形状：直线，圆形，三角形，矩形，圆角矩形
+	IDM_MENU_SHAPE				equ	450
+	IDM_MENU_SHAPE_LINE			equ	451
+	IDM_MENU_SHAPE_CIRCLE		equ	452
+	IDM_MENU_SHAPE_RECT			equ	453
+	IDM_MENU_SHAPE_ROUND_RECT	equ	454
 
 	;菜单-大小：1px, 3px, 5px, 7px
 	IDM_MENU_SIZE			equ	460
@@ -152,10 +152,11 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	str_menu_tool_select	BYTE	"框选", 0
 
 	;形状
-	str_menu_shape			BYTE	"形状", 0
-	str_menu_shape_line		BYTE	"直线", 0
-	str_menu_shape_circle	BYTE	"圆形", 0
-	str_menu_shape_rect		BYTE	"矩形", 0
+	str_menu_shape				BYTE	"形状", 0
+	str_menu_shape_line			BYTE	"直线", 0
+	str_menu_shape_circle		BYTE	"圆形", 0
+	str_menu_shape_rect			BYTE	"矩形", 0
+	str_menu_shape_round_rect	BYTE	"圆角矩形",0
 
 	;大小
 	str_menu_size			BYTE	"大小", 0

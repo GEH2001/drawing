@@ -53,6 +53,7 @@ CreateMainMenu PROC
 	INVOKE AppendMenu, hShapeMenu, MF_STRING, IDM_MENU_SHAPE_LINE, ADDR str_menu_shape_line
 	INVOKE AppendMenu, hShapeMenu, MF_STRING, IDM_MENU_SHAPE_CIRCLE, ADDR str_menu_shape_circle
 	INVOKE AppendMenu, hShapeMenu, MF_STRING, IDM_MENU_SHAPE_RECT, ADDR str_menu_shape_rect
+	INVOKE AppendMenu, hShapeMenu, MF_STRING, IDM_MENU_SHAPE_ROUND_RECT, ADDR str_menu_shape_round_rect
 	INVOKE AppendMenu, hMenu, MF_POPUP, hShapeMenu, ADDR str_menu_shape
 	
 	;ด๓ะก

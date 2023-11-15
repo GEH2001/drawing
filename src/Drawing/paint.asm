@@ -78,23 +78,11 @@ Draw_Line PROC, hdc:HDC
 	ret
 Draw_Line ENDP
 
-Draw_Line_Inverse PROC, hdc:HDC
-	INVOKE MoveToEx, hdc, beginX, beginY, NULL
-	INVOKE LineTo, hdc, lastX, lastY
-	ret
-Draw_Line_Inverse ENDP
-
 ;圆形
 Draw_Circle PROC, hdc:HDC
 	INVOKE Ellipse, hdc, beginX, beginY, endX, endY
 	ret
 Draw_Circle ENDP
-
-Draw_Circle_Inverse PROC, hdc:HDC
-	INVOKE Ellipse, hdc, beginX, beginY, lastX, lastY
-	ret
-Draw_Circle_Inverse ENDP
-
 
 ;矩形
 Draw_Rect PROC, hdc:HDC
@@ -102,10 +90,26 @@ Draw_Rect PROC, hdc:HDC
 	ret
 Draw_Rect ENDP
 
-Draw_Rect_Inverse PROC, hdc:HDC
-	INVOKE Rectangle, hdc, beginX, beginY, lastX, lastY
+;圆角矩形
+Draw_Round_Rect PROC, hdc:HDC
+	LOCAL w:DWORD
+	LOCAL h:DWORD
+
+	mov eax, endX
+	sub eax, beginX
+    xor edx, edx        ; 清零除数高位寄存器
+    mov ebx, 4			; 设置除数
+    div ebx             ; 执行除法运算
+    mov w, eax          ; 存储商
+	mov eax, endY
+	sub eax, beginY
+    xor edx, edx        ; 清零除数高位寄存器
+    mov ebx, 4			; 设置除数
+    div ebx             ; 执行除法运算
+    mov h, eax          ; 存储商
+	INVOKE RoundRect, hdc, beginX, beginY, endX, endY, w, h
 	ret
-Draw_Rect_Inverse ENDP
+Draw_Round_Rect ENDP
 
 ;文本
 Draw_Text PROC, hdc:HDC
