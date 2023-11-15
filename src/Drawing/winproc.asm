@@ -67,6 +67,7 @@ ChangeColorFill PROC, hWnd:HWND
 		mov eax, cc.rgbResult
 		mov fill_color, eax
 		mov fill, 1
+		mov fill_style, 0
 		
 	error:
 		ret
@@ -148,6 +149,18 @@ HandleCommand PROC USES ebx ecx,
 		mov fill, 0
 	.ELSEIF wParam == IDM_MENU_COLOR_FILL_COLOR
 		INVOKE ChangeColorFill, hWnd
+	.ELSEIF wParam == IDM_MENU_COLOR_FILL_STYLE_1
+		mov fill_style, 1
+	.ELSEIF wParam == IDM_MENU_COLOR_FILL_STYLE_2
+		mov fill_style, 2
+	.ELSEIF wParam == IDM_MENU_COLOR_FILL_STYLE_3
+		mov fill_style, 3
+	.ELSEIF wParam == IDM_MENU_COLOR_FILL_STYLE_4
+		mov fill_style, 4
+	.ELSEIF wParam == IDM_MENU_COLOR_FILL_STYLE_5
+		mov fill_style, 5
+	.ELSEIF wParam == IDM_MENU_COLOR_FILL_STYLE_6
+		mov fill_style, 6
 	; 选择文件
 	.ELSEIF wParam == IDM_MENU_FILE_OPEN
 		INVOKE Openfile, hWnd
@@ -341,6 +354,7 @@ HandlePaint PROC,
 	INVOKE BeginPaint, hWnd, ADDR ps
 
 	;自定义画笔
+	;处理形状无轮廓情况
 	.IF mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT || mode == IDM_MODE_SHAPE_ROUND_RECT || mode == IDM_MODE_SHAPE_TRIANGLE
 		.IF border == 0
 			INVOKE CreatePen, pen_style, pen_width, fill_color
@@ -355,8 +369,22 @@ HandlePaint PROC,
 	.ENDIF
 	INVOKE GetStockObject, NULL_BRUSH
 	mov brush, eax
-	INVOKE CreateSolidBrush, fill_color
-	;INVOKE CreateHatchBrush, HS_BDIAGONAL, fill_color		; 纹理填充
+	;纯色填充与纹理填充
+	.IF fill_style == 0
+		INVOKE CreateSolidBrush, fill_color
+	.ELSEIF fill_style == 1
+		INVOKE CreateHatchBrush, HS_HORIZONTAL, fill_color
+	.ELSEIF fill_style == 2
+		INVOKE CreateHatchBrush, HS_VERTICAL, fill_color
+	.ELSEIF fill_style == 3
+		INVOKE CreateHatchBrush, HS_CROSS, fill_color
+	.ELSEIF fill_style == 4
+		INVOKE CreateHatchBrush, HS_DIAGCROSS, fill_color
+	.ELSEIF fill_style == 5
+		INVOKE CreateHatchBrush, HS_FDIAGONAL, fill_color
+	.ELSEIF fill_style == 6
+		INVOKE CreateHatchBrush, HS_BDIAGONAL, fill_color
+	.ENDIF
 	mov hBrush, eax
 
 	;从内存加载旧图像（仅适用于绘制形状）

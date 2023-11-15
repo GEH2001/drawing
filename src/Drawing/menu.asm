@@ -20,6 +20,7 @@ CreateMainMenu PROC
 	LOCAL hColorMenu:HMENU
 	LOCAL hColorLineMenu:HMENU
 	LOCAL hColorFillMenu:HMENU
+	LOCAL hColorFillStyleMenu:HMENU
 
 	; ²Ëµ¥À¸
 	INVOKE CreateMenu
@@ -80,6 +81,15 @@ CreateMainMenu PROC
 	INVOKE AppendMenu, hColorFillMenu, MF_STRING, IDM_MENU_COLOR_FILL_NULL, ADDR str_menu_color_fill_null
 	INVOKE AppendMenu, hColorFillMenu, MF_STRING, IDM_MENU_COLOR_FILL_COLOR, ADDR str_menu_color_fill_color
 	INVOKE AppendMenu, hColorMenu, MF_POPUP, hColorFillMenu, ADDR str_menu_color_fill
+	INVOKE CreatePopupMenu
+	mov hColorFillStyleMenu, eax
+	INVOKE AppendMenu, hColorFillStyleMenu, MF_STRING, IDM_MENU_COLOR_FILL_STYLE_1, ADDR str_menu_color_fill_style_1
+	INVOKE AppendMenu, hColorFillStyleMenu, MF_STRING, IDM_MENU_COLOR_FILL_STYLE_2, ADDR str_menu_color_fill_style_2
+	INVOKE AppendMenu, hColorFillStyleMenu, MF_STRING, IDM_MENU_COLOR_FILL_STYLE_3, ADDR str_menu_color_fill_style_3
+	INVOKE AppendMenu, hColorFillStyleMenu, MF_STRING, IDM_MENU_COLOR_FILL_STYLE_4, ADDR str_menu_color_fill_style_4
+	INVOKE AppendMenu, hColorFillStyleMenu, MF_STRING, IDM_MENU_COLOR_FILL_STYLE_5, ADDR str_menu_color_fill_style_5
+	INVOKE AppendMenu, hColorFillStyleMenu, MF_STRING, IDM_MENU_COLOR_FILL_STYLE_6, ADDR str_menu_color_fill_style_6
+	INVOKE AppendMenu, hColorFillMenu, MF_POPUP, hColorFillStyleMenu, ADDR str_menu_color_fill_style
 
 	ret
 CreateMainMenu ENDP

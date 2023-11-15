@@ -52,6 +52,7 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	pen_width		DWORD	3
 	pen_color		DWORD	0h
 	fill_color		DWORD	0ffffffh
+	fill_style		DWORD	0	;默认值0表示纯色填充
 
 	;形状属性
 	border			DWORD	1	;默认有边框
@@ -134,6 +135,13 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	IDM_MENU_COLOR_LINE_COLOR		equ 472
 	IDM_MENU_COLOR_FILL_NULL		equ	473
 	IDM_MENU_COLOR_FILL_COLOR		equ	474	
+	IDM_MENU_COLOR_FILL_STYLE		equ 475
+	IDM_MENU_COLOR_FILL_STYLE_1		equ 476
+	IDM_MENU_COLOR_FILL_STYLE_2		equ 477
+	IDM_MENU_COLOR_FILL_STYLE_3		equ 478
+	IDM_MENU_COLOR_FILL_STYLE_4		equ 479
+	IDM_MENU_COLOR_FILL_STYLE_5		equ 480
+	IDM_MENU_COLOR_FILL_STYLE_6		equ 481
 
 	;--------------字符串-----------------------------
 	
@@ -171,9 +179,16 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 
 	;颜色
 	str_menu_color				BYTE	"颜色", 0
-	str_menu_color_line			BYTE	"线条颜色",0
+	str_menu_color_line			BYTE	"线条",0
 	str_menu_color_line_null	BYTE	"无轮廓",0
 	str_menu_color_line_color	BYTE	"选择颜色",0
-	str_menu_color_fill			BYTE	"填充颜色",0
+	str_menu_color_fill			BYTE	"填充",0
 	str_menu_color_fill_null	BYTE	"无填充",0
 	str_menu_color_fill_color	BYTE	"选择颜色",0
+	str_menu_color_fill_style	BYTE	"选择样式",0
+	str_menu_color_fill_style_1	BYTE	"水平纹理",0
+	str_menu_color_fill_style_2	BYTE	"竖直纹理",0
+	str_menu_color_fill_style_3	BYTE	"网格纹理",0
+	str_menu_color_fill_style_4	BYTE	"斜向网格纹理",0
+	str_menu_color_fill_style_5	BYTE	"左上-右下纹理",0
+	str_menu_color_fill_style_6	BYTE	"左下-右上纹理",0
