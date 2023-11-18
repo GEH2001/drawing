@@ -65,6 +65,10 @@ CreateMainMenu PROC
 	INVOKE AppendMenu, hSizeMenu, MF_STRING, IDM_MENU_SIZE_THREE, ADDR str_menu_size_three
 	INVOKE AppendMenu, hSizeMenu, MF_STRING, IDM_MENU_SIZE_FIVE, ADDR str_menu_size_five
 	INVOKE AppendMenu, hSizeMenu, MF_STRING, IDM_MENU_SIZE_SEVEN, ADDR str_menu_size_seven
+	INVOKE AppendMenu, hSizeMenu, MF_STRING, IDM_MENU_SIZE_NINE, ADDR str_menu_size_nine
+	INVOKE AppendMenu, hSizeMenu, MF_STRING, IDM_MENU_SIZE_ELEVEN, ADDR str_menu_size_eleven
+	INVOKE AppendMenu, hSizeMenu, MF_STRING, IDM_MENU_SIZE_THIRTEEN, ADDR str_menu_size_thirteen
+	INVOKE AppendMenu, hSizeMenu, MF_STRING, IDM_MENU_SIZE_FIFTEEN, ADDR str_menu_size_fifteen
 	INVOKE AppendMenu, hMenu, MF_POPUP, hSizeMenu, ADDR str_menu_size
 
 	;ÑÕÉ«

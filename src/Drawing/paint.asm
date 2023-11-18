@@ -45,12 +45,13 @@ cnt		DWORD	0
 .code
 
 ;橡皮擦
-Erase PROC USES ebx ecx edx, hdc:HDC
+Erase PROC USES ebx ecx edx, hdc: HDC
+
 	;设置画笔
 	INVOKE GetStockObject, NULL_PEN 
 	INVOKE SelectObject, hdc, eax
 	;绘制空白矩形，(curX-10,curY-10) -> (curX+10, curY+10)
-	mov	ecx, eraser_size
+	mov	ecx, 10
 	mov ebx, curX
 	mov edx, curY
 	sub curX, ecx	;curX - 10
@@ -95,14 +96,26 @@ Draw_Round_Rect PROC, hdc:HDC
 	LOCAL w:DWORD
 	LOCAL h:DWORD
 
-	mov eax, endX
-	sub eax, beginX
+	mov eax, beginX
+	.IF eax > endX
+		mov eax, beginX
+		sub eax, endX
+	.ELSE
+		mov eax, endX
+		sub eax, beginX
+	.ENDIF
     xor edx, edx        ; 清零除数高位寄存器
     mov ebx, 4			; 设置除数
     div ebx             ; 执行除法运算
     mov w, eax          ; 存储商
-	mov eax, endY
-	sub eax, beginY
+	mov eax, beginY
+	.IF eax > endY
+		mov eax, beginY
+		sub eax, endY
+	.ELSE
+		mov eax, endY
+		sub eax, beginY
+	.ENDIF
     xor edx, edx        ; 清零除数高位寄存器
     mov ebx, 4			; 设置除数
     div ebx             ; 执行除法运算

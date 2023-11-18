@@ -26,13 +26,13 @@ HandlePaint			PROTO hWnd:HWND, wParam:WPARAM, lParam:LPARAM		; VM_PAIN
 
 ; paint.asm		绘制函数
 Erase				PROTO hdc:HDC	; 橡皮擦
-Freehand			PROTO hdc:HDC	; 自由绘制
-Draw_Line			PROTO hdc:HDC	; 直线
-Draw_Circle			PROTO hdc:HDC	; 圆形
-Draw_Rect			PROTO hdc:HDC	; 矩形
-Draw_Round_Rect		PROTO hdc:HDC	; 圆角矩形
-Draw_Text			PROTO hdc:HDC	; 文本
-Draw_Triangle		PROTO hdc:HDC	; 三角形
+Freehand			PROTO hdc:HDC				; 自由绘制
+Draw_Line			PROTO hdc:HDC				; 直线
+Draw_Circle			PROTO hdc:HDC				; 圆形
+Draw_Rect			PROTO hdc:HDC				; 矩形
+Draw_Round_Rect		PROTO hdc:HDC				; 圆角矩形
+Draw_Text			PROTO hdc:HDC				; 文本
+Draw_Triangle		PROTO hdc:HDC				; 三角形
 
 ;file.asm		文件处理
 Openfile			PROTO hWnd:HWND	; 打开文件
@@ -128,6 +128,10 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	IDM_MENU_SIZE_THREE		equ	462
 	IDM_MENU_SIZE_FIVE		equ	463
 	IDM_MENU_SIZE_SEVEN		equ 464
+	IDM_MENU_SIZE_NINE		equ 465
+	IDM_MENU_SIZE_ELEVEN	equ 466
+	IDM_MENU_SIZE_THIRTEEN	equ 467
+	IDM_MENU_SIZE_FIFTEEN	equ 468
 
 	;菜单-颜色:线条、无填充、色彩填充
 	IDM_MENU_COLOR					equ	470
@@ -176,6 +180,10 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	str_menu_size_three		BYTE	"3 像素", 0
 	str_menu_size_five		BYTE	"5 像素", 0
 	str_menu_size_seven		BYTE	"7 像素", 0
+	str_menu_size_nine		BYTE	"9 像素", 0
+	str_menu_size_eleven	BYTE	"11 像素", 0
+	str_menu_size_thirteen	BYTE	"13 像素", 0
+	str_menu_size_fifteen	BYTE	"15 像素", 0
 
 	;颜色
 	str_menu_color				BYTE	"颜色", 0

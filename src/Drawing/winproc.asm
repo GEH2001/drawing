@@ -5,13 +5,11 @@
 option casemap:none
 
 INCLUDE header.inc
+INCLUDE gdiplus.inc
 
 ;PUBLIC lMouseFlag
 
 .data
-
-;lMouseFlag	DWORD	0		;鼠标左键状态：down(1)、up(0)，只有down的时候才会绘制
-;drawingArea	RECT <0,0,988,600>	;绘制区域，就是窗口的 client area
 ;修改颜色
 acrCustClr		COLORREF	16 DUP(0)
 ; 内存缓存
@@ -133,13 +131,53 @@ HandleCommand PROC USES ebx ecx,
 		mov mode, IDM_MODE_SHAPE_TRIANGLE
 	;更改笔触大小
 	.ELSEIF wParam == IDM_MENU_SIZE_ONE
-		mov pen_width, 1 
+		.IF mode == IDM_MODE_ERASE
+			mov eraser_size, 1
+		.ELSE
+			mov pen_width, 1 
+		.ENDIF
 	.ELSEIF wParam == IDM_MENU_SIZE_THREE
-		mov pen_width, 3 
+		.IF mode == IDM_MODE_ERASE
+			mov eraser_size, 3
+		.ELSE
+			mov pen_width, 3
+		.ENDIF
 	.ELSEIF wParam == IDM_MENU_SIZE_FIVE
-		mov pen_width, 5 
+		.IF mode == IDM_MODE_ERASE
+			mov eraser_size, 5
+		.ELSE
+			mov pen_width, 5
+		.ENDIF
 	.ELSEIF wParam == IDM_MENU_SIZE_SEVEN
-		mov pen_width, 7 
+		.IF mode == IDM_MODE_ERASE
+			mov eraser_size, 7
+		.ELSE
+			mov pen_width, 7
+		.ENDIF
+	.ELSEIF wParam == IDM_MENU_SIZE_NINE
+		.IF mode == IDM_MODE_ERASE
+			mov eraser_size, 9
+		.ELSE
+			mov pen_width, 9
+		.ENDIF
+	.ELSEIF wParam == IDM_MENU_SIZE_ELEVEN
+		.IF mode == IDM_MODE_ERASE
+			mov eraser_size, 11
+		.ELSE
+			mov pen_width, 11
+		.ENDIF
+	.ELSEIF wParam == IDM_MENU_SIZE_THIRTEEN
+		.IF mode == IDM_MODE_ERASE
+			mov eraser_size, 13
+		.ELSE
+			mov pen_width, 13
+		.ENDIF
+	.ELSEIF wParam == IDM_MENU_SIZE_FIFTEEN
+		.IF mode == IDM_MODE_ERASE
+			mov eraser_size, 15
+		.ELSE
+			mov pen_width, 15
+		.ENDIF
 	;更改颜色
 	.ELSEIF wParam == IDM_MENU_COLOR_LINE_NULL
 		mov border, 0
@@ -213,7 +251,7 @@ HandleMouseMove PROC USES ebx ecx edx,
 	
 
 	;更新 begin(x,y) end(x,y)
-	.IF mode == IDM_MODE_FREEHAND	;画图模式
+	.IF mode == IDM_MODE_FREEHAND || mode == IDM_MODE_ERASE	;画图模式
 		.IF lMouseFlag == 1
 			.IF	endX == 0	; 鼠标第一次进入 client area, begin和end设置为相等，绘制线条的距离为0（也就是不绘制）
 				mov beginX, ecx
@@ -237,7 +275,7 @@ HandleMouseMove PROC USES ebx ecx edx,
 
 	.IF mode == IDM_MODE_ERASE
 		.IF lMouseFlag == 1
-			INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号WM_PAINT
+			;INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号WM_PAINT
 		.ENDIF
 	.ENDIF
 
@@ -350,6 +388,7 @@ HandlePaint PROC,
 	LOCAL brush:HBRUSH
 	LOCAL hBrush:HBRUSH
 	LOCAL hOldBrush:HBRUSH
+	LOCAL eraser:HPEN
 
 	INVOKE BeginPaint, hWnd, ADDR ps
 
@@ -386,6 +425,9 @@ HandlePaint PROC,
 		INVOKE CreateHatchBrush, HS_BDIAGONAL, fill_color
 	.ENDIF
 	mov hBrush, eax
+	;橡皮擦
+	INVOKE CreatePen, pen_style, eraser_size, 0FFFFFFh
+	mov eraser, eax
 
 	;从内存加载旧图像（仅适用于绘制形状）
 	.IF mode == IDM_MODE_SHAPE_LINE || mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT || mode == IDM_MODE_SHAPE_ROUND_RECT || mode == IDM_MODE_SHAPE_TRIANGLE
@@ -398,7 +440,9 @@ HandlePaint PROC,
 	.ENDIF
 
 	.IF mode == IDM_MODE_ERASE	; 橡皮擦
-		INVOKE Erase, ps.hdc
+		INVOKE SelectObject, ps.hdc, eraser
+		INVOKE Freehand, ps.hdc
+		;INVOKE Erase, ps.hdc
 	.ENDIF
 
 	.IF mode == IDM_MODE_TEXT	;文本
