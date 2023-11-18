@@ -65,7 +65,6 @@ ChangeColorFill PROC, hWnd:HWND
 		mov eax, cc.rgbResult
 		mov fill_color, eax
 		mov fill, 1
-		mov fill_style, 0
 		
 	error:
 		ret
@@ -193,6 +192,8 @@ HandleCommand PROC USES ebx ecx,
 		mov fill, 0
 	.ELSEIF wParam == IDM_MENU_COLOR_FILL_COLOR
 		INVOKE ChangeColorFill, hWnd
+	.ELSEIF wParam == IDM_MENU_COLOR_FILL_STYLE_0
+		mov fill_style, 0
 	.ELSEIF wParam == IDM_MENU_COLOR_FILL_STYLE_1
 		mov fill_style, 1
 	.ELSEIF wParam == IDM_MENU_COLOR_FILL_STYLE_2

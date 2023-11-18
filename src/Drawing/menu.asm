@@ -90,6 +90,7 @@ CreateMainMenu PROC
 	INVOKE AppendMenu, hColorMenu, MF_POPUP, hColorFillMenu, ADDR str_menu_color_fill
 	INVOKE CreatePopupMenu
 	mov hColorFillStyleMenu, eax
+	INVOKE AppendMenu, hColorFillStyleMenu, MF_STRING, IDM_MENU_COLOR_FILL_STYLE_0, ADDR str_menu_color_fill_style_0
 	INVOKE AppendMenu, hColorFillStyleMenu, MF_STRING, IDM_MENU_COLOR_FILL_STYLE_1, ADDR str_menu_color_fill_style_1
 	INVOKE AppendMenu, hColorFillStyleMenu, MF_STRING, IDM_MENU_COLOR_FILL_STYLE_2, ADDR str_menu_color_fill_style_2
 	INVOKE AppendMenu, hColorFillStyleMenu, MF_STRING, IDM_MENU_COLOR_FILL_STYLE_3, ADDR str_menu_color_fill_style_3

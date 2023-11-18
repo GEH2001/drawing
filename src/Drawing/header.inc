@@ -147,6 +147,7 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	IDM_MENU_COLOR_FILL_NULL		equ	473
 	IDM_MENU_COLOR_FILL_COLOR		equ	474	
 	IDM_MENU_COLOR_FILL_STYLE		equ 475
+	IDM_MENU_COLOR_FILL_STYLE_0		equ 482
 	IDM_MENU_COLOR_FILL_STYLE_1		equ 476
 	IDM_MENU_COLOR_FILL_STYLE_2		equ 477
 	IDM_MENU_COLOR_FILL_STYLE_3		equ 478
@@ -204,6 +205,7 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	str_menu_color_fill_null	BYTE	"无填充",0
 	str_menu_color_fill_color	BYTE	"选择颜色",0
 	str_menu_color_fill_style	BYTE	"选择样式",0
+	str_menu_color_fill_style_0	BYTE	"纯色填充",0
 	str_menu_color_fill_style_1	BYTE	"水平纹理",0
 	str_menu_color_fill_style_2	BYTE	"竖直纹理",0
 	str_menu_color_fill_style_3	BYTE	"网格纹理",0

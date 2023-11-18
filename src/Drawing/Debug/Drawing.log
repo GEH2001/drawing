@@ -1,11 +1,1 @@
-﻿  Assembling winproc.asm...
-winproc.asm(233): warning A6004: procedure argument or local not referenced : lParam
-winproc.asm(317): warning A6004: procedure argument or local not referenced : wParam
-winproc.asm(343): warning A6004: procedure argument or local not referenced : wParam
-winproc.asm(343): warning A6004: procedure argument or local not referenced : lParam
-winproc.asm(372): warning A6004: procedure argument or local not referenced : wParam
-winproc.asm(372): warning A6004: procedure argument or local not referenced : lParam
-winproc.asm(394): warning A6004: procedure argument or local not referenced : lParam
-winproc.asm(557): warning A6004: procedure argument or local not referenced : wParam
-winproc.asm(557): warning A6004: procedure argument or local not referenced : lParam
-  Drawing.vcxproj -> D:\ApplePie\grade3\汇编与编译原理\hw\painter\code\src\Debug\Drawing.exe
+﻿  Drawing.vcxproj -> D:\ApplePie\grade3\汇编与编译原理\hw\painter\code\src\Debug\Drawing.exe
