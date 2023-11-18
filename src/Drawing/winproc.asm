@@ -258,7 +258,7 @@ HandleMouseMove PROC USES ebx ecx edx,
 
 	;更新 begin(x,y) end(x,y)
 	.IF mode == IDM_MODE_FREEHAND || mode == IDM_MODE_WRITEBRUSH || \
-		mode == IDM_MODE_DOUBLELINE || mode == IDM_MODE_PENCIL	;画图模式
+		mode == IDM_MODE_DOUBLELINE || mode == IDM_MODE_PENCIL || mode == IDM_MODE_ERASE	;画图模式
 		.IF lMouseFlag == 1
 			.IF	endX == 0	; 鼠标第一次进入 client area, begin和end设置为相等，绘制线条的距离为0（也就是不绘制）
 				mov beginX, ecx
