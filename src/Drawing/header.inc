@@ -26,13 +26,14 @@ HandlePaint			PROTO hWnd:HWND, wParam:WPARAM, lParam:LPARAM		; VM_PAIN
 
 ; paint.asm		绘制函数
 Erase				PROTO hdc:HDC	; 橡皮擦
-Freehand			PROTO hdc:HDC				; 自由绘制
-Draw_Line			PROTO hdc:HDC				; 直线
-Draw_Circle			PROTO hdc:HDC				; 圆形
-Draw_Rect			PROTO hdc:HDC				; 矩形
-Draw_Round_Rect		PROTO hdc:HDC				; 圆角矩形
-Draw_Text			PROTO hdc:HDC				; 文本
-Draw_Triangle		PROTO hdc:HDC				; 三角形
+Freehand			PROTO hdc:HDC	; 自由绘制
+WriteBrush			PROTO hdc:HDC	; 毛笔
+Draw_Line			PROTO hdc:HDC	; 直线
+Draw_Circle			PROTO hdc:HDC	; 圆形
+Draw_Rect			PROTO hdc:HDC	; 矩形
+Draw_Round_Rect		PROTO hdc:HDC	; 圆角矩形
+Draw_Text			PROTO hdc:HDC	; 文本
+Draw_Triangle		PROTO hdc:HDC	; 三角形
 
 ;file.asm		文件处理
 Openfile			PROTO hWnd:HWND	; 打开文件
@@ -97,6 +98,9 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	IDM_MODE_TEXT				equ 507		;输入文字
 	IDM_MODE_COLPIC				equ 508		;选择颜色
 	IDM_MODE_SHAPE_TRIANGLE		equ 509		;绘制三角形
+	IDM_MODE_WRITEBRUSH			equ 510		;毛笔模式
+	IDM_MODE_DOUBLELINE			equ 511		;双线模式
+	IDM_MODE_PENCIL				equ 512		;铅笔模式
 
 	;菜单-文件：打开，保存
 	IDM_MENU_FILE			equ 420
@@ -107,6 +111,9 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	IDM_MENU_BRUSH			equ	430
 	IDM_MENU_BRUSH_BASIC	equ	431
 	IDM_MENU_BRUSH_DASH		equ	432
+	IDM_MENU_BRUSH_WRITEBRUSH	equ 433
+	IDM_MENU_BRUSH_DOUBLELINE	equ 434
+	IDM_MENU_BRUSH_PENCIL		equ 435
 
 	;菜单-工具：橡皮擦，文本，颜色取色器，框选
 	IDM_MENU_TOOL			equ	440
@@ -155,9 +162,12 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	str_menu_file_save		BYTE	"保存", 0
 	
 	;画笔
-	str_menu_brush			BYTE	"画笔", 0
-	str_menu_brush_basic	BYTE	"实线", 0
-	str_menu_brush_dash		BYTE	"虚线(仅对形状生效)", 0
+	str_menu_brush				BYTE	"画笔", 0
+	str_menu_brush_basic		BYTE	"实线", 0
+	str_menu_brush_dash			BYTE	"虚线(仅对形状生效)", 0
+	str_menu_brush_writeBrush	BYTE	"毛笔", 0
+	str_menu_brush_pencil		BYTE	"铅笔", 0
+	str_menu_brush_doubleLine	BYTE	"双线", 0
 	
 	;工具
 	str_menu_tool			BYTE	"工具",	0

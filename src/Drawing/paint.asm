@@ -19,7 +19,7 @@ PUBLIC endY
 PUBLIC fixedX
 PUBLIC fixedY
 
-PUBLIC char
+PUBLIC buf
 PUBLIC cnt
 
 .data
@@ -35,11 +35,13 @@ endX	DWORD	0	;Freehand：	LineTo
 endY	DWORD	0
 fixedX	DWORD	0	;drawText
 fixedY	DWORD	0
+tempX	DWORD	0	;writeBrush
+tempY	DWORD   0
 
-;键盘输入
-char	WPARAM	"2"
 ;文字计数
 cnt		DWORD	0
+;键盘输入
+buf		BYTE	"abcdefghijk"
 
 
 .code
@@ -144,21 +146,32 @@ Draw_Triangle PROC, hdc:HDC
 	ret
 Draw_Triangle ENDP
 
+;毛笔
+WriteBrush PROC hdc:HDC
+	mov ecx,5
+	dec curY
+	dec curY
+	.WHILE ecx
+	push ecx
+
+	mov eax,curX
+	mov tempX,eax
+	sub curX,2
+	add tempX,2
+	INVOKE MoveToEx, hdc, curX, curY, NULL
+	INVOKE LineTo, hdc, tempX, curY
+	inc curY
+
+	pop ecx
+	dec ecx
+	.ENDW
+
+	ret
+WriteBrush ENDP
+
 ;文本
 Draw_Text PROC, hdc:HDC
-	push eax
-	MOV eax,cnt
-	IMUL eax,5
-	add	eax,fixedX
-	INVOKE TextOutA, hdc, eax, fixedY, ADDR char, 1
-	inc cnt
-	inc cnt
-	.IF char == "f" || char == "i" || char == "j" || char == "l" || char == "t" || char == " "
-		dec cnt
-	.ELSEIF char == "m" || char == "w"
-		inc cnt
-	.ENDIF
-	pop eax
+	INVOKE TextOutA, hdc, fixedX, fixedY, ADDR buf, cnt
 	ret
 Draw_Text ENDP
 

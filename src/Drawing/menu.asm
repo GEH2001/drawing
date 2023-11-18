@@ -38,6 +38,9 @@ CreateMainMenu PROC
 	mov hBrushMenu, eax
 	INVOKE AppendMenu, hBrushMenu, MF_STRING, IDM_MENU_BRUSH_BASIC, ADDR str_menu_brush_basic
 	INVOKE AppendMenu, hBrushMenu, MF_STRING, IDM_MENU_BRUSH_DASH, ADDR str_menu_brush_dash
+		INVOKE AppendMenu, hBrushMenu, MF_STRING, IDM_MENU_BRUSH_WRITEBRUSH, ADDR str_menu_brush_writeBrush
+	INVOKE AppendMenu, hBrushMenu, MF_STRING, IDM_MENU_BRUSH_PENCIL, ADDR str_menu_brush_pencil
+	INVOKE AppendMenu, hBrushMenu, MF_STRING, IDM_MENU_BRUSH_DOUBLELINE, ADDR str_menu_brush_doubleLine
 	INVOKE AppendMenu, hMenu, MF_POPUP, hBrushMenu, ADDR str_menu_brush
 
 	;¹¤¾ß

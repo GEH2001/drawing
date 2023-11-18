@@ -99,6 +99,12 @@ HandleCommand PROC USES ebx ecx,
 	.ELSEIF wParam == IDM_MENU_BRUSH_DASH
 		mov pen_style, PS_DASH
 		mov pen_width, 1
+	.ELSEIF wParam == IDM_MENU_BRUSH_WRITEBRUSH
+		mov mode, IDM_MODE_WRITEBRUSH
+	.ELSEIF wParam == IDM_MENU_BRUSH_DOUBLELINE
+		mov mode, IDM_MODE_DOUBLELINE
+	.ELSEIF wParam == IDM_MENU_BRUSH_PENCIL
+		mov mode, IDM_MODE_PENCIL
 	;选择工具
 	.ELSEIF wParam == IDM_MENU_TOOL_ERASER
 		mov mode, IDM_MODE_ERASE
@@ -251,7 +257,8 @@ HandleMouseMove PROC USES ebx ecx edx,
 	
 
 	;更新 begin(x,y) end(x,y)
-	.IF mode == IDM_MODE_FREEHAND || mode == IDM_MODE_ERASE	;画图模式
+	.IF mode == IDM_MODE_FREEHAND || mode == IDM_MODE_WRITEBRUSH || \
+		mode == IDM_MODE_DOUBLELINE || mode == IDM_MODE_PENCIL	;画图模式
 		.IF lMouseFlag == 1
 			.IF	endX == 0	; 鼠标第一次进入 client area, begin和end设置为相等，绘制线条的距离为0（也就是不绘制）
 				mov beginX, ecx
@@ -365,14 +372,21 @@ HandleLButtonUp	PROC,
 HandleLButtonUp	ENDP
 
 ;键盘按下
-HandleKeyboard PROC,
+HandleKeyboard PROC USES eax ebx,
 	hWnd: HWND, wParam: WPARAM, lParam: LPARAM
-	extern char:WPARAM
+	extern buf:BYTE
 	extern cnt:DWORD
 
 	.IF mode == IDM_MODE_TEXT
-		push wParam
-		pop char
+		.IF wParam == 0dh	;回车按下
+			mov cnt, 0
+			add fixedY,20
+		.ELSE
+			mov eax, wParam
+			mov ebx, cnt
+			mov buf[ebx], al
+			inc cnt
+		.ENDIF
 		INVOKE InvalidateRect, hWnd, ADDR drawingArea, 0	;触发窗口重绘信号WM_PAINT
 	.ENDIF
 
@@ -437,6 +451,41 @@ HandlePaint PROC,
 	.IF mode == IDM_MODE_FREEHAND	; 自由绘制
 		INVOKE SelectObject, ps.hdc, hPen
 		INVOKE Freehand, ps.hdc
+	.ENDIF
+
+	.IF mode == IDM_MODE_WRITEBRUSH	;毛笔
+		INVOKE SelectObject, ps.hdc, hPen
+		INVOKE WriteBrush, ps.hdc
+	.ENDIF
+
+	.IF mode == IDM_MODE_PENCIL	;铅笔
+		push pen_width
+		.WHILE pen_width
+		INVOKE SetPixel,ps.hdc,curX,curY,pen_color
+		inc curX
+		inc curY
+		INVOKE SetPixel,ps.hdc,curX,curY,pen_color
+		dec pen_width
+		.ENDW
+		pop pen_width
+
+		push pen_width
+		mov eax,pen_width
+		sub curX,eax
+		.WHILE pen_width
+		INVOKE SetPixel,ps.hdc,curX,curY,pen_color
+		inc curX
+		dec curY
+		dec pen_width
+		.ENDW
+		pop pen_width
+	.ENDIF
+
+	.IF mode == IDM_MODE_DOUBLELINE	;双线
+		INVOKE SetPixel,ps.hdc,curX,curY,pen_color
+		add curX,5
+		add curY,5
+		INVOKE SetPixel,ps.hdc,curX,curY,pen_color
 	.ENDIF
 
 	.IF mode == IDM_MODE_ERASE	; 橡皮擦
