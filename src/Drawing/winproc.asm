@@ -546,6 +546,12 @@ HandlePaint PROC,
 
 	.IF mode == IDM_MODE_SHAPE_TRIANGLE
 		INVOKE SelectObject, ps.hdc, hPen
+		.IF fill == 0
+			INVOKE SelectObject, ps.hdc, brush	;¿ÕÐÄ»­Ë¢
+		.ELSE
+			INVOKE SelectObject, ps.hdc, hBrush
+			mov hOldBrush, eax
+		.ENDIF
 		INVOKE Draw_Triangle, ps.hdc
 	.ENDIF
 

@@ -42,6 +42,8 @@ tempY	DWORD   0
 cnt		DWORD	0
 ;º¸≈Ã ‰»Î
 buf		BYTE	"abcdefghijk"
+;»˝Ω«–Œ
+pointArray POINT 5 DUP(<>)
 
 
 .code
@@ -130,7 +132,9 @@ Draw_Round_Rect ENDP
 Draw_Triangle PROC, hdc:HDC
 	LOCAL pX:DWORD
 	LOCAL pY:DWORD
+	LOCAL region:HRGN 
 
+	;ªÊ÷∆±ﬂøÚ
 	mov eax, beginX
 	add eax, beginX
 	sub eax, endX
@@ -143,6 +147,24 @@ Draw_Triangle PROC, hdc:HDC
 	INVOKE LineTo, hdc, pX, pY
 	INVOKE MoveToEx, hdc, pX, pY, NULL
 	INVOKE LineTo, hdc, beginX, beginY
+
+	;ªÊ÷∆ÃÓ≥‰
+	mov eax, beginX
+	mov pointArray[0].x, eax
+	mov eax, beginY
+	mov pointArray[0].y, eax
+	mov eax, endX
+	mov pointArray[8].x, eax
+	mov eax, endY
+	mov pointArray[8].y, eax
+	mov eax, pX
+	mov pointArray[16].x, eax
+	mov eax, pY
+	mov pointArray[16].y, eax
+
+	INVOKE SetPolyFillMode, hdc, ALTERNATE
+	INVOKE Polygon, hdc, OFFSET pointArray, 3
+
 	ret
 Draw_Triangle ENDP
 
