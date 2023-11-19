@@ -250,6 +250,177 @@ Draw_Hexagon PROC, hdc:HDC
 	ret
 Draw_Hexagon ENDP
 
+Draw_Star PROC, hdc:HDC
+	LOCAL px:DWORD
+	LOCAL py:DWORD
+	LOCAL qx:DWORD
+	LOCAL qy:DWORD
+	LOCAL sx:DWORD
+	LOCAL sy:DWORD
+	LOCAL tx:DWORD
+	LOCAL ty:DWORD
+	LOCAL w:DWORD
+	LOCAL h:DWORD
+
+	mov eax, endX
+	sub eax, beginX
+	shr eax, 1
+	mov w, eax
+	mov eax, endY
+	sub eax, beginY
+	shr eax, 1
+	mov h, eax
+
+	mov eax, beginX
+	add eax, w
+	mov px, eax
+	mov eax, beginY
+	sub eax, h
+	mov py, eax
+	mov eax, endX
+	add eax, w
+	mov qx, eax
+	mov eax, beginY
+	add eax, h
+	mov qy, eax
+	INVOKE Arc, hdc, px, py, qx, qy, beginX, beginY, endX, endY
+
+	mov eax, beginX
+	add eax, w
+	mov px, eax
+	mov eax, beginY
+	add eax, h
+	mov py, eax
+	mov eax, endX
+	add eax, w
+	mov qx, eax
+	mov eax, endY
+	add eax, h
+	mov qy, eax
+	mov eax, endX
+	mov sx, eax
+	mov eax, beginY
+	mov sy, eax
+	mov eax, beginX
+	mov tx, eax
+	mov eax, endY
+	mov ty, eax
+	INVOKE Arc, hdc, px, py, qx, qy, sx, sy, tx, ty
+
+	mov eax, beginX
+	sub eax, w
+	mov px, eax
+	mov eax, beginY
+	add eax, h
+	mov py, eax
+	mov eax, endX
+	sub eax, w
+	mov qx, eax
+	mov eax, endY
+	add eax, h
+	mov qy, eax
+	INVOKE Arc, hdc, px, py, qx, qy, endX, endY, beginX, beginY
+
+	mov eax, beginX
+	sub eax, w
+	mov px, eax
+	mov eax, beginY
+	sub eax, h
+	mov py, eax
+	mov eax, endX
+	sub eax, w
+	mov qx, eax
+	mov eax, endY
+	sub eax, h
+	mov qy, eax
+	mov eax, beginX
+	mov sx, eax
+	mov eax, endY
+	mov sy, eax
+	mov eax, endX
+	mov tx, eax
+	mov eax, beginY
+	mov ty, eax
+	INVOKE Arc, hdc, px, py, qx, qy, sx, sy, tx, ty
+	ret
+Draw_Star ENDP
+
+Draw_Love PROC, hdc:HDC
+		LOCAL px:DWORD
+		LOCAL py:DWORD
+		LOCAL qx:DWORD
+		LOCAL qy:DWORD
+		LOCAL sx:DWORD
+		LOCAL sy:DWORD
+		LOCAL tx:DWORD
+		LOCAL ty:DWORD
+		LOCAL ox:DWORD
+		LOCAL oy:DWORD
+		LOCAL w:DWORD
+		LOCAL h:DWORD
+
+		mov eax, beginX
+		cmp eax, endX
+		jge invalid
+		mov eax, beginY
+		cmp eax, endY
+		jge invalid
+
+		mov eax, endX
+		sub eax, beginX
+		shr eax, 1
+		mov w, eax
+		mov eax, endY
+		sub eax, beginY
+		shr eax, 2
+		mov h, eax
+
+		mov eax, beginX
+		add eax, w
+		mov qx, eax
+		mov eax, beginY
+		add eax, h
+		add eax, h
+		mov qy, eax
+		mov eax, endX
+		mov sx, eax
+		mov eax, beginY
+		add eax, h
+		mov sy, eax
+		mov eax, beginX
+		mov tx, eax
+		mov eax, beginY
+		add eax, h
+		mov ty, eax
+		INVOKE Arc, hdc, beginX, beginY, qx, qy, sx, sy, tx, ty
+
+		mov eax, beginX
+		add eax, w
+		mov px, eax
+		mov eax, beginY
+		mov py, eax
+		mov eax, endX
+		mov qx, eax
+		mov eax, beginY
+		add eax, h
+		add eax, h
+		mov qy, eax
+		INVOKE Arc, hdc, px, py, qx, qy, sx, sy, tx, ty
+
+		INVOKE MoveToEx, hdc, sx, sy, NULL
+		mov ebx, beginX
+		add ebx, w
+		mov ox, ebx
+		mov edx, endY
+		mov oy, edx
+		INVOKE LineTo, hdc, ox, oy
+		INVOKE MoveToEx, hdc, ox, oy, NULL
+		INVOKE LineTo, hdc, tx, ty
+
+	invalid:
+		ret
+Draw_Love ENDP
+
 ;Ã«±Ê
 WriteBrush PROC hdc:HDC
 	mov ecx,5

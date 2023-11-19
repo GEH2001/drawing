@@ -1,1 +1,3 @@
-﻿  Drawing.vcxproj -> D:\ApplePie\grade3\汇编与编译原理\hw\painter\code\src\Debug\Drawing.exe
+﻿  Assembling paint.asm...
+paint.asm(170): warning A6004: procedure argument or local not referenced : region
+  Drawing.vcxproj -> D:\ApplePie\grade3\汇编与编译原理\hw\painter\code\src\Debug\Drawing.exe

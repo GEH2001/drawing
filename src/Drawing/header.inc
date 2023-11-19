@@ -35,6 +35,8 @@ Draw_Round_Rect		PROTO hdc:HDC	; 圆角矩形
 Draw_Text			PROTO hdc:HDC	; 文本
 Draw_Triangle		PROTO hdc:HDC	; 三角形
 Draw_Hexagon		PROTO hdc:HDC	; 六边形
+Draw_Star			PROTO hdc:HDC	; 星星
+Draw_Love			PROTO hdc:HDC	; 心形
 
 ;file.asm		文件处理
 Openfile			PROTO hWnd:HWND	; 打开文件
@@ -103,6 +105,8 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	IDM_MODE_DOUBLELINE			equ 511		;双线模式
 	IDM_MODE_PENCIL				equ 512		;铅笔模式
 	IDM_MODE_SHAPE_HEXAGON		equ 513		;绘制六边形
+	IDM_MODE_SHAPE_STAR			equ 514		;绘制星星
+	IDM_MODE_SHAPE_LOVE			equ 515		;绘制爱心
 
 	;菜单-文件：打开，保存
 	IDM_MENU_FILE			equ 420
@@ -131,6 +135,8 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	IDM_MENU_SHAPE_ROUND_RECT	equ	454
 	IDM_MENU_SHAPE_TRIANGLE		equ 455
 	IDM_MENU_SHAPE_HEXAGON		equ 456
+	IDM_MENU_SHAPE_STAR			equ 457
+	IDM_MENU_SHAPE_LOVE			equ 458
 
 	;菜单-大小：1px, 3px, 5px, 7px
 	IDM_MENU_SIZE			equ	460
@@ -188,6 +194,8 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	str_menu_shape_round_rect	BYTE	"圆角矩形",0
 	str_menu_shape_triangle		BYTE	"三角形", 0
 	str_menu_shape_hexagon		BYTE	"六边形", 0
+	str_menu_shape_star			BYTE	"星星", 0
+	str_menu_shape_love			BYTE	"心形",0
 
 	;大小
 	str_menu_size			BYTE	"大小", 0
