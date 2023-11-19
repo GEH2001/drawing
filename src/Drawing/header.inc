@@ -34,6 +34,7 @@ Draw_Rect			PROTO hdc:HDC	; 矩形
 Draw_Round_Rect		PROTO hdc:HDC	; 圆角矩形
 Draw_Text			PROTO hdc:HDC	; 文本
 Draw_Triangle		PROTO hdc:HDC	; 三角形
+Draw_Hexagon		PROTO hdc:HDC	; 六边形
 
 ;file.asm		文件处理
 Openfile			PROTO hWnd:HWND	; 打开文件
@@ -101,6 +102,7 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	IDM_MODE_WRITEBRUSH			equ 510		;毛笔模式
 	IDM_MODE_DOUBLELINE			equ 511		;双线模式
 	IDM_MODE_PENCIL				equ 512		;铅笔模式
+	IDM_MODE_SHAPE_HEXAGON		equ 513		;绘制六边形
 
 	;菜单-文件：打开，保存
 	IDM_MENU_FILE			equ 420
@@ -128,6 +130,7 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	IDM_MENU_SHAPE_RECT			equ	453
 	IDM_MENU_SHAPE_ROUND_RECT	equ	454
 	IDM_MENU_SHAPE_TRIANGLE		equ 455
+	IDM_MENU_SHAPE_HEXAGON		equ 456
 
 	;菜单-大小：1px, 3px, 5px, 7px
 	IDM_MENU_SIZE			equ	460
@@ -184,6 +187,7 @@ Savefile			PROTO hWnd:HWND	; 保存文件
 	str_menu_shape_rect			BYTE	"矩形", 0
 	str_menu_shape_round_rect	BYTE	"圆角矩形",0
 	str_menu_shape_triangle		BYTE	"三角形", 0
+	str_menu_shape_hexagon		BYTE	"六边形", 0
 
 	;大小
 	str_menu_size			BYTE	"大小", 0

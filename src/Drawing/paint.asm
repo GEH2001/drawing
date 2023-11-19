@@ -39,12 +39,13 @@ tempX	DWORD	0	;writeBrush
 tempY	DWORD   0
 
 ;文字计数
-cnt		DWORD	0
+cnt			DWORD	0
 ;键盘输入
-buf		BYTE	"abcdefghijk"
+buf			BYTE	"abcdefghijk"
 ;三角形
-pointArray POINT 5 DUP(<>)
-
+pointArray	POINT	5 DUP(<>)
+;六边形
+points		POINT	6 DUP(<>)
 
 .code
 
@@ -167,6 +168,87 @@ Draw_Triangle PROC, hdc:HDC
 
 	ret
 Draw_Triangle ENDP
+
+;六边形
+Draw_Hexagon PROC, hdc:HDC
+	LOCAL w:DWORD
+	LOCAL h:DWORD
+	LOCAL x:DWORD
+	LOCAL y:DWORD
+
+	mov eax, endX
+	sub eax, beginX
+	shr eax, 1
+	mov w, eax
+	mov eax, endY
+	sub eax, beginY
+	shr eax, 2
+	mov h, eax
+
+	mov eax, beginX
+	add eax, w
+	mov x, eax
+	mov points[0].x, eax
+	mov eax, beginY
+	mov y, eax
+	mov points[0].y, eax
+	INVOKE MoveToEx, hdc, x, y, NULL		;A
+	mov eax, endX
+	mov x, eax
+	mov points[8].x, eax
+	mov points[16].x, eax
+	mov ebx, beginY
+	add ebx, h
+	mov y, ebx
+	mov points[8].y, ebx
+	INVOKE LineTo, hdc, x, y				;B
+	INVOKE MoveToEx, hdc, x, y, NULL
+	mov ebx, y
+	add ebx, h
+	add ebx, h
+	mov y, ebx
+	mov points[16].y, ebx
+	INVOKE LineTo, hdc, x, y				;C
+	INVOKE MoveToEx, hdc, x, y, NULL
+	mov eax, beginX
+	add eax, w
+	mov x, eax
+	mov points[24].x, eax
+	mov ebx, endY
+	mov y, ebx
+	mov points[24].y, ebx
+	INVOKE LineTo, hdc, x, y				;D
+	INVOKE MoveToEx, hdc, x, y, NULL
+	mov eax, beginX
+	mov x, eax
+	mov points[32].x, eax
+	mov points[40].x, eax
+	mov ebx, y
+	sub ebx, h
+	mov y, ebx
+	mov points[32].y, ebx
+	INVOKE LineTo, hdc, x, y				;E
+	INVOKE MoveToEx, hdc, x, y, NULL
+	sub ebx, h
+	sub ebx, h
+	mov y, ebx
+	mov points[40].y, ebx
+	INVOKE LineTo, hdc, x, y				;F
+	INVOKE MoveToEx, hdc, x, y, NULL
+	mov eax, beginX
+	add eax, w
+	mov x, eax
+	mov points[48].x, eax
+	mov eax, beginY
+	mov y, eax
+	mov points[48].y, eax
+	INVOKE LineTo, hdc, x, y
+
+	;填充
+	INVOKE SetPolyFillMode, hdc, ALTERNATE
+	INVOKE Polygon, hdc, OFFSET points, 6
+	ret
+Draw_Hexagon ENDP
 
 ;毛笔
 WriteBrush PROC hdc:HDC

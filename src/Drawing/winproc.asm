@@ -134,6 +134,8 @@ HandleCommand PROC USES ebx ecx,
 		mov mode, IDM_MODE_SHAPE_ROUND_RECT
 	.ELSEIF wParam == IDM_MENU_SHAPE_TRIANGLE
 		mov mode, IDM_MODE_SHAPE_TRIANGLE
+	.ELSEIF wParam == IDM_MENU_SHAPE_HEXAGON
+		mov mode, IDM_MODE_SHAPE_HEXAGON
 	;更改笔触大小
 	.ELSEIF wParam == IDM_MENU_SIZE_ONE
 		.IF mode == IDM_MODE_ERASE
@@ -214,7 +216,7 @@ HandleCommand PROC USES ebx ecx,
 	.ENDIF
 
 	; 保存当前画面（仅用于形状）
-	.IF wParam == IDM_MENU_SHAPE_CIRCLE || wParam == IDM_MENU_SHAPE_LINE || wParam == IDM_MENU_SHAPE_RECT || wParam == IDM_MENU_SHAPE_ROUND_RECT || wParam == IDM_MENU_SHAPE_TRIANGLE
+	.IF wParam == IDM_MENU_SHAPE_CIRCLE || wParam == IDM_MENU_SHAPE_LINE || wParam == IDM_MENU_SHAPE_RECT || wParam == IDM_MENU_SHAPE_ROUND_RECT || wParam == IDM_MENU_SHAPE_TRIANGLE || wParam == IDM_MENU_SHAPE_HEXAGON
 		; 创建内存DC和内存位图
 		INVOKE GetDC, hWnd
 		mov hdc, eax
@@ -287,7 +289,7 @@ HandleMouseMove PROC USES ebx ecx edx,
 		.ENDIF
 	.ENDIF
 
-	.IF mode == IDM_MODE_SHAPE_LINE || mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT || mode == IDM_MODE_SHAPE_ROUND_RECT || mode == IDM_MODE_SHAPE_TRIANGLE
+	.IF mode == IDM_MODE_SHAPE_LINE || mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT || mode == IDM_MODE_SHAPE_ROUND_RECT || mode == IDM_MODE_SHAPE_TRIANGLE || mode == IDM_MODE_SHAPE_HEXAGON
 		.IF lMouseFlag == 1
 			.IF	endX == 0	; 鼠标第一次进入 client area, last坐标需要置cur
 				mov beginX, ecx
@@ -336,7 +338,7 @@ HandleLButtonDown PROC USES ebx,
 		mov fixedX, ebx
 		mov ebx, curY
 		mov fixedY, ebx
-	.ELSEIF mode == IDM_MODE_SHAPE_LINE || mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT || mode == IDM_MODE_SHAPE_ROUND_RECT || mode == IDM_MODE_SHAPE_TRIANGLE
+	.ELSEIF mode == IDM_MODE_SHAPE_LINE || mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT || mode == IDM_MODE_SHAPE_ROUND_RECT || mode == IDM_MODE_SHAPE_TRIANGLE || mode == IDM_MODE_SHAPE_HEXAGON
 		mov isDrawing, 1
 	.ENDIF
 
@@ -362,7 +364,7 @@ HandleLButtonUp	PROC,
 	mov endY, 0
 	mov	lMouseFlag, 0
 
-	.IF mode == IDM_MODE_SHAPE_LINE || mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT || mode == IDM_MODE_SHAPE_ROUND_RECT || mode == IDM_MODE_SHAPE_TRIANGLE
+	.IF mode == IDM_MODE_SHAPE_LINE || mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT || mode == IDM_MODE_SHAPE_ROUND_RECT || mode == IDM_MODE_SHAPE_TRIANGLE || mode == IDM_MODE_SHAPE_HEXAGON
 		mov isDrawing, 0
 		INVOKE BeginPaint, hWnd, ADDR ps
 		INVOKE BitBlt, memDC, 0, 0, drawingArea.right, drawingArea.bottom, ps.hdc, 0, 0, SRCCOPY
@@ -409,7 +411,7 @@ HandlePaint PROC,
 
 	;自定义画笔
 	;处理形状无轮廓情况
-	.IF mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT || mode == IDM_MODE_SHAPE_ROUND_RECT || mode == IDM_MODE_SHAPE_TRIANGLE
+	.IF mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT || mode == IDM_MODE_SHAPE_ROUND_RECT || mode == IDM_MODE_SHAPE_TRIANGLE || mode == IDM_MODE_SHAPE_HEXAGON
 		.IF border == 0
 			INVOKE CreatePen, pen_style, pen_width, fill_color
 			mov hPen, eax
@@ -445,7 +447,7 @@ HandlePaint PROC,
 	mov eraser, eax
 
 	;从内存加载旧图像（仅适用于绘制形状）
-	.IF mode == IDM_MODE_SHAPE_LINE || mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT || mode == IDM_MODE_SHAPE_ROUND_RECT || mode == IDM_MODE_SHAPE_TRIANGLE
+	.IF mode == IDM_MODE_SHAPE_LINE || mode == IDM_MODE_SHAPE_CIRCLE || mode == IDM_MODE_SHAPE_RECT || mode == IDM_MODE_SHAPE_ROUND_RECT || mode == IDM_MODE_SHAPE_TRIANGLE || mode == IDM_MODE_SHAPE_HEXAGON
 		INVOKE BitBlt, ps.hdc, 0, 0, drawingArea.right, drawingArea.bottom, memDC, 0, 0, SRCCOPY
 	.ENDIF
 
@@ -553,6 +555,17 @@ HandlePaint PROC,
 			mov hOldBrush, eax
 		.ENDIF
 		INVOKE Draw_Triangle, ps.hdc
+	.ENDIF
+
+	.IF mode == IDM_MODE_SHAPE_HEXAGON
+		INVOKE SelectObject, ps.hdc, hPen
+		.IF fill == 0
+			INVOKE SelectObject, ps.hdc, brush	;空心画刷
+		.ELSE
+			INVOKE SelectObject, ps.hdc, hBrush
+			mov hOldBrush, eax
+		.ENDIF
+		INVOKE Draw_Hexagon, ps.hdc
 	.ENDIF
 
 	; 回收资源
